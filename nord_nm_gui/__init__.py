@@ -48,6 +48,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
         self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
         self.config = configparser.ConfigParser()
+        # the following tries to print a status bar message if it fails, but
+        # the UI has not yet been initialised
         self.api_data = self.get_api_data()
         self.username = None
         self.password = None
@@ -567,9 +569,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if resp.status_code == requests.codes.ok:
                 return resp.json()
             else:
-                self.statusbar.showMessage("Get API failed", 2000)
+                # self.statusbar.showMessage("Get API failed", 2000)
+                print("Get API failed (not OK)")
         except Exception as ex:
-            self.statusbar.showMessage("Get API failed", 2000)
+            # self.statusbar.showMessage("Get API failed", 2000)
+            print("Get API failed (exception)")
 
     def get_country_list(self, api_data):
         """

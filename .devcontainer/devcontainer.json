@@ -11,6 +11,6 @@
 		"sourcery.sourcery",
 		"bungcip.better-toml",
 	],
-	"postCreateCommand": "pre-commit install",
+	"postCreateCommand": "poetry install && pre-commit install",
 	"remoteUser": "vscode"
 }
