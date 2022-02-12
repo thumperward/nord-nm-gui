@@ -5,7 +5,11 @@
 	},
 	"extensions": [
 		"ms-python.python",
-		"ms-python.vscode-pylance"
+		"ms-python.vscode-pylance",
+		"davidanson.vscode-markdownlint",
+		"redhat.vscode-yaml",
+		"sourcery.sourcery",
+		"bungcip.better-toml",
 	],
 	"postCreateCommand": "pre-commit install",
 	"remoteUser": "vscode"
