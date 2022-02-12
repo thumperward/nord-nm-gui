@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 # NordVPN-NetworkManager-GUI a graphical frontend for both NordVPN and the Network Manager
 # Copyright (C) 2018 Vincent Foster-Mueller
-import sys
-import os
-import requests
-import shutil
-import time
-import prctl
-import keyring
-import subprocess
 import configparser
+import os
+import shutil
+import subprocess
+import sys
+import time
 from collections import namedtuple
+
+import keyring
+import prctl
+import requests
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QSystemTrayIcon, QStyle, QAction, qApp, QMenu, QCheckBox
 from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QAction, QCheckBox, QMenu, QStyle, QSystemTrayIcon, qApp
 
 connection_type_options = ["UDP", "TCP"]
 server_type_options = [
@@ -24,7 +25,8 @@ server_type_options = [
     "Dedicated IP",
 ]  # , 'Anti-DDoS', 'Obfuscated Server']
 api = "https://api.nordvpn.com/server"
-ServerInfo = namedtuple("ServerInfo", "name, country, domain, type, load, categories")
+ServerInfo = namedtuple(
+    "ServerInfo", "name, country, domain, type, load, categories")
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -39,8 +41,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.base_dir = os.path.join(
             os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
         )  # /home/username/.nordnmconfigs
-        self.config_path = os.path.join(os.path.abspath(self.base_dir), ".configs")
-        self.scripts_path = os.path.join(os.path.abspath(self.base_dir), ".scripts")
+        self.config_path = os.path.join(
+            os.path.abspath(self.base_dir), ".configs")
+        self.scripts_path = os.path.join(
+            os.path.abspath(self.base_dir), ".scripts")
         self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
         self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
         self.config = configparser.ConfigParser()
@@ -135,7 +139,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.title_label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.title_label.sizePolicy().hasHeightForWidth())
         self.title_label.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(6)
@@ -160,7 +165,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.line.sizePolicy().hasHeightForWidth())
         self.line.setSizePolicy(sizePolicy)
         self.line.setMinimumSize(QtCore.QSize(180, 0))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -226,7 +232,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.connect_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.connect_btn.sizePolicy().hasHeightForWidth())
         self.connect_btn.setSizePolicy(sizePolicy)
         self.connect_btn.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.connect_btn.setObjectName("connect_btn")
@@ -258,7 +265,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.line_2.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.line_2.sizePolicy().hasHeightForWidth())
         self.line_2.setSizePolicy(sizePolicy)
         self.line_2.setMinimumSize(QtCore.QSize(180, 0))
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
@@ -292,7 +300,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.server_type_select.addItems(server_type_options)
         self.country_list.addItems(server_country_list)
         self.country_list.itemClicked.connect(self.get_server_list)
-        self.server_type_select.currentTextChanged.connect(self.get_server_list)
+        self.server_type_select.currentTextChanged.connect(
+            self.get_server_list)
 
         # Button functionality here
         self.connect_btn.clicked.connect(self.connect)
@@ -336,7 +345,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
+        self.verticalLayout.setSizeConstraint(
+            QtWidgets.QLayout.SetDefaultConstraint)
         self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -352,7 +362,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.user_input.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.user_input.sizePolicy().hasHeightForWidth())
         self.user_input.setSizePolicy(sizePolicy)
         self.user_input.setMaximumSize(QtCore.QSize(200, 30))
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
@@ -395,7 +406,8 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.login_btn.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.login_btn.sizePolicy().hasHeightForWidth())
         self.login_btn.setSizePolicy(sizePolicy)
         self.login_btn.setObjectName("login_btn")
         self.verticalLayout_6.addWidget(self.login_btn)
@@ -509,11 +521,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 # check whether credentials should be saved
                 if self.remember_checkBox.isChecked():
                     try:
-                        keyring.set_password("NordVPN", self.username, self.password)
+                        keyring.set_password(
+                            "NordVPN", self.username, self.password)
                         self.config["USER"]["USER_NAME"] = self.username
                         self.write_conf()
                     except Exception as ex:
-                        self.statusbar.showMessage("Error accessing keyring", 1000)
+                        self.statusbar.showMessage(
+                            "Error accessing keyring", 1000)
                         time.sleep(1)
 
                 # Delete credentials if found
@@ -534,10 +548,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.hide()
                 self.main_ui()
             else:
-                self.statusbar.showMessage("Invalid Username or Password", 2000)
+                self.statusbar.showMessage(
+                    "Invalid Username or Password", 2000)
 
         except Exception as ex:
-            self.statusbar.showMessage("API Error: could not fetch token", 2000)
+            self.statusbar.showMessage(
+                "API Error: could not fetch token", 2000)
             self.get_api_data()
 
     def get_api_data(self):
@@ -651,7 +667,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 list(x)
                 for x in zip(
                     *sorted(
-                        zip(server_name_list, self.domain_list, self.server_info_list),
+                        zip(server_name_list, self.domain_list,
+                            self.server_info_list),
                         key=lambda x: x[2].load,
                     )
                 )
@@ -696,24 +713,28 @@ class MainWindow(QtWidgets.QMainWindow):
             ovpn_url = tcp_url
 
         if self.connection_type_select.currentText() == "UDP":
-            filename = self.domain_list[self.server_list.currentRow()] + ".udp.ovpn"
+            filename = self.domain_list[self.server_list.currentRow(
+            )] + ".udp.ovpn"
             ovpn_file = requests.get(ovpn_url + filename, stream=True)
             if ovpn_file.status_code == requests.codes.ok:
                 self.ovpn_path = os.path.join(self.config_path, filename)
                 with open(self.ovpn_path, "wb") as out_file:
                     shutil.copyfileobj(ovpn_file.raw, out_file)
             else:
-                self.statusbar.showMessage("Error fetching configuration files", 2000)
+                self.statusbar.showMessage(
+                    "Error fetching configuration files", 2000)
 
         elif self.connection_type_select.currentText() == "TCP":
-            filename = self.domain_list[self.server_list.currentRow()] + ".tcp.ovpn"
+            filename = self.domain_list[self.server_list.currentRow(
+            )] + ".tcp.ovpn"
             ovpn_file = requests.get(ovpn_url + filename, stream=True)
             if ovpn_file.status_code == requests.codes.ok:
                 self.ovpn_path = os.path.join(self.config_path, filename)
                 with open(self.ovpn_path, "wb") as out_file:
                     shutil.copyfileobj(ovpn_file.raw, out_file)
             else:
-                self.statusbar.showMessage("Error fetching configuration files", 2000)
+                self.statusbar.showMessage(
+                    "Error fetching configuration files", 2000)
 
         self.server_list.setFocus()
 
@@ -804,7 +825,8 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             password_flag.check_returncode()
         except subprocess.CalledProcessError:
-            self.statusbar.showMessage("ERROR: Secrets could not be added", 2000)
+            self.statusbar.showMessage(
+                "ERROR: Secrets could not be added", 2000)
 
     def generate_connection_name(self):
         """
@@ -864,7 +886,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             "[Standard" in connection_info
                             or "[Standard]" in connection_info
                         ):  # Normal servers
-                            server_name = connection_info[0] + " " + connection_info[1]
+                            server_name = connection_info[0] + \
+                                " " + connection_info[1]
                         elif "[Double" in connection_info:  # Double VPN server
                             server_name = (
                                 connection_info[0]
@@ -883,7 +906,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                 + connection_info[2]
                             )
                         elif "[Dedicated" in connection_info:  # Dedicated IP
-                            server_name = connection_info[0] + " " + connection_info[1]
+                            server_name = connection_info[0] + \
+                                " " + connection_info[1]
                         if self.server_info_list:  # vpn connected successfully
                             for server in self.server_info_list:
                                 if server_name == server.name:
@@ -931,7 +955,8 @@ class MainWindow(QtWidgets.QMainWindow):
                                         + server.categories,
                                         QtCore.Qt.MatchExactly,
                                     )
-                                    self.server_list.setCurrentItem(server_list_item[0])
+                                    self.server_list.setCurrentItem(
+                                        server_list_item[0])
                                     self.server_list.setFocus()
                                     self.connection_name = connection_name
                                     self.connected_server = server.name
@@ -944,7 +969,8 @@ class MainWindow(QtWidgets.QMainWindow):
                             return False
 
         except subprocess.CalledProcessError:
-            self.statusbar.showMessage("ERROR: Network Manager query error", 2000)
+            self.statusbar.showMessage(
+                "ERROR: Network Manager query error", 2000)
             self.repaint()
 
     def randomize_mac(self):
@@ -1023,13 +1049,15 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo_dialog.text_label.setObjectName("text_label")
         sudo_dialog.verticalLayout.addWidget(sudo_dialog.text_label)
         sudo_dialog.sudo_password = QtWidgets.QLineEdit(self)
-        sudo_dialog.sudo_password.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        sudo_dialog.sudo_password.setCursor(
+            QtGui.QCursor(QtCore.Qt.IBeamCursor))
         sudo_dialog.sudo_password.setAlignment(QtCore.Qt.AlignCenter)
         sudo_dialog.sudo_password.setClearButtonEnabled(False)
         sudo_dialog.sudo_password.setObjectName("sudo_password")
         sudo_dialog.sudo_password.setEchoMode(QtWidgets.QLineEdit.Password)
         sudo_dialog.verticalLayout.addWidget(sudo_dialog.sudo_password)
-        sudo_dialog.gridLayout.addLayout(sudo_dialog.verticalLayout, 0, 0, 1, 1)
+        sudo_dialog.gridLayout.addLayout(
+            sudo_dialog.verticalLayout, 0, 0, 1, 1)
         sudo_dialog.horizontalLayout = QtWidgets.QHBoxLayout()
         sudo_dialog.horizontalLayout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint
@@ -1043,13 +1071,15 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo_dialog.horizontalLayout.addItem(spacerItem)
         sudo_dialog.accept_box = QtWidgets.QDialogButtonBox(sudo_dialog)
         sudo_dialog.accept_box.setOrientation(QtCore.Qt.Horizontal)
-        sudo_dialog.accept_box.addButton("Login", QtWidgets.QDialogButtonBox.AcceptRole)
+        sudo_dialog.accept_box.addButton(
+            "Login", QtWidgets.QDialogButtonBox.AcceptRole)
         sudo_dialog.accept_box.addButton(
             "Cancel", QtWidgets.QDialogButtonBox.RejectRole
         )
         sudo_dialog.accept_box.setObjectName("accept_box")
         sudo_dialog.horizontalLayout.addWidget(sudo_dialog.accept_box)
-        sudo_dialog.gridLayout.addLayout(sudo_dialog.horizontalLayout, 1, 0, 1, 1)
+        sudo_dialog.gridLayout.addLayout(
+            sudo_dialog.horizontalLayout, 1, 0, 1, 1)
         sudo_dialog.setWindowTitle("Authentication Needed")
         sudo_dialog.text_label.setText(
             '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the auto-connect script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
@@ -1058,7 +1088,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # move to center
         sudo_dialog.move(
             int((resolution.width() / 2) - (sudo_dialog.frameSize().width() / 2)),
-            int((resolution.height() / 2) - (sudo_dialog.frameSize().height() / 2)),
+            int((resolution.height() / 2) -
+                (sudo_dialog.frameSize().height() / 2)),
         )
         # button functionality here
         sudo_dialog.accept_box.accepted.connect(self.check_sudo)
@@ -1538,7 +1569,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 p1.stdout.close()
                 p2.stdout.close()
             except subprocess.CalledProcessError:
-                self.statusbar.showMessage("ERROR: disabling IPV6 failed", 2000)
+                self.statusbar.showMessage(
+                    "ERROR: disabling IPV6 failed", 2000)
         else:
             self.sudo_dialog = self.get_sudo()
             self.sudo_dialog.text_label.setText(
@@ -1573,7 +1605,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     p1.stdout.close()
                     p2.stdout.close()
                 except subprocess.CalledProcessError:
-                    self.statusbar.showMessage("ERROR: disabling IPV6 failed", 2000)
+                    self.statusbar.showMessage(
+                        "ERROR: disabling IPV6 failed", 2000)
 
     def enable_ipv6(self):
         """
@@ -1606,7 +1639,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 p1.stdout.close()
                 p2.stdout.close()
             except subprocess.CalledProcessError:
-                self.statusbar.showMessage("ERROR: disabling IPV6 failed", 2000)
+                self.statusbar.showMessage(
+                    "ERROR: disabling IPV6 failed", 2000)
         else:
             self.sudo_dialog = self.get_sudo()
             self.sudo_dialog.text_label.setText(
@@ -1641,7 +1675,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     p1.stdout.close()
                     p2.stdout.close()
                 except subprocess.CalledProcessError:
-                    self.statusbar.showMessage("ERROR: Enabling IPV6 failed", 2000)
+                    self.statusbar.showMessage(
+                        "ERROR: Enabling IPV6 failed", 2000)
 
     def check_connection_validity(self):
         """
@@ -1690,7 +1725,8 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             connection.check_returncode()
         except subprocess.CalledProcessError:
-            self.statusbar.showMessage("ERROR: Failed to remove Connection", 2000)
+            self.statusbar.showMessage(
+                "ERROR: Failed to remove Connection", 2000)
 
     def connect(self):
         """

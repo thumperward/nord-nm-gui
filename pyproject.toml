@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "nordvpn-networkmanager-gui"
+version = "0.0.1"
+description = "Graphical frontend for NordVPN on Linux"
+authors = [
+  "Vincent Foster-Mueller <https://github.com/vfosterm>",
+  "Chris Cunningham <thumperward@hotmail.com>"
+]
+license = "GPL v3"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+python-prctl = "^1.8.1"
+requests = "^2.27.1"
+keyring = "^23.5.0"
+PyQt5 = "^5.15.6"
+
+[tool.poetry.dev-dependencies]
+autopep8 = "^1.6.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
