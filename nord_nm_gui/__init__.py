@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         super(MainWindow, self).__init__()
         self.setObjectName("MainWindowObject")
-        self.setWindowIcon(QtGui.QIcon("nordvpnicon.png"))
+        self.setWindowIcon(QtGui.QIcon("../assets/nordvpnicon.png"))
         self.base_dir = os.path.join(
             os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
         )  # /home/username/.nordnmconfigs
@@ -61,7 +61,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Initialize System Tray Icon
         """
-        self.trayIcon = QIcon("nordvpnicon.png")
+        self.trayIcon = QIcon("../assets/nordvpnicon.png")
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(self.trayIcon)
         show_action = QAction("Show NordVPN Network Manager", self)
@@ -1829,7 +1829,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.title_label.setText(
             _translate(
                 "MainWindow",
-                '<html><head/><body><p align="center"><img src="nord-logo.png"/></p></body></html>',
+                '<html><head/><body><p align="center"><img src="../assets/nord-logo.png"/></p></body></html>',
             )
         )
         self.country_list_label.setText(_translate("MainWindow", "Countries"))
@@ -1864,7 +1864,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.nord_image.setText(
             _translate(
                 "MainWindow",
-                '<html><head/><body><p align="center"><img src="nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
+                '<html><head/><body><p align="center"><img src="../assets/nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
             )
         )
         self.user_label.setText(
@@ -1883,7 +1883,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.remember_checkBox.setText(_translate("MainWindow", "Remember"))
 
 
-if __name__ == "__main__":
+def main():
     app_name = "NordVPN"
     prctl.set_name(app_name)
     prctl.set_proctitle(app_name)
