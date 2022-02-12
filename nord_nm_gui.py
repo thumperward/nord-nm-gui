@@ -614,25 +614,25 @@ class MainWindow(QtWidgets.QMainWindow):
                     server_categories += "Standard "
                     server_category_list.append("Standard")
                 elif category["name"] == "P2P":
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
                     server_category_list.append("P2P")
                 elif category["name"] == "Anti-DDoS":
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
                     server_category_list.append("Anti-DDoS")
                 elif category["name"] == "Obfuscated Servers":
                     server_categories += "Obfuscated"
                     server_category_list.append("Obfuscated Server")
                 elif category["name"] == "Dedicated IP":
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
                     server_category_list.append("Dedicated IP")
                 elif category["name"] == "Double VPN":
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
                     server_category_list.append("Double VPN")
                 elif category["name"] == "Onion Over VPN":
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
                     server_category_list.append("TOR over VPN")
                 else:
-                    server_categories += category["name"] + " "
+                    server_categories += f'{category["name"]} '
             if (
                 (name not in server_name_list)
                 and (country == filtered[0])
@@ -688,9 +688,6 @@ class MainWindow(QtWidgets.QMainWindow):
         ovpn_url = None
         udp_url = "https://downloads.nordcdn.com/configs/files/ovpn_udp/servers/"
         tcp_url = "https://downloads.nordcdn.com/configs/files/ovpn_tcp/servers/"
-        udp_xor_url = (
-            "https://downloads.nordcdn.com/configs/files/ovpn_xor_udp/servers/"
-        )
         tcp_xor_url = (
             "https://downloads.nordcdn.com/configs/files/ovpn_xor_tcp/servers/"
         )
@@ -698,6 +695,9 @@ class MainWindow(QtWidgets.QMainWindow):
         if (self.server_type_select.currentText() == "Obfuscated Server") and (
             self.connection_type_select.currentText() == "UDP"
         ):
+            udp_xor_url = (
+                "https://downloads.nordcdn.com/configs/files/ovpn_xor_udp/servers/"
+            )
             ovpn_url = udp_xor_url
         elif (self.server_type_select.currentText() == "Obfuscated Server") and (
             self.connection_type_select.currentText() == "TCP"
@@ -787,9 +787,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     "modify",
                     self.connection_name,
                     "+vpn.secrets",
-                    "password=" + self.password,
+                    f'password={self.password}',
                 ]
             )
+
             secrets.check_returncode()
             user_secret = subprocess.run(
                 [
@@ -798,9 +799,10 @@ class MainWindow(QtWidgets.QMainWindow):
                     "modify",
                     self.connection_name,
                     "+vpn.data",
-                    "username=" + self.username,
+                    f'username={self.username}',
                 ]
             )
+
             user_secret.check_returncode()
             disable_ipv6 = subprocess.run(
                 [
