@@ -37,4 +37,3 @@ Terminal=false
 Categories=Internet;System;Utilities;" | sudo tee $DESK_PATH/nordvpn.desktop > /dev/null
 
 sudo chmod +x $DESK_PATH/nordvpn.desktop
-
