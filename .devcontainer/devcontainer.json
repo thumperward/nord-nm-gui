@@ -10,6 +10,7 @@
 		"redhat.vscode-yaml",
 		"sourcery.sourcery",
 		"bungcip.better-toml",
+		"nico-castell.linux-desktop-file"
 	],
 	"postCreateCommand": "poetry install && pre-commit install",
 	"remoteUser": "vscode"
