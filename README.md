@@ -6,9 +6,9 @@
 [![commits-since](https://img.shields.io/github/commits-since/vfosterm/NordVPN-NetworkManager-Gui/latest?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/commits/master)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
-![Login Screen](./assets/login_new.png)
+![Login Screen](nord_nm_gui/assets/login_new.png)
 
-![Main Screen](./assets/main_new.png)
+![Main Screen](nord_nm_gui/assets/main_new.png)
 
 ## About
 
