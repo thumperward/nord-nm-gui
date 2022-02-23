@@ -14,7 +14,7 @@ import prctl
 import requests
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QAction, QCheckBox, QMenu, QStyle, QSystemTrayIcon, qApp
+from PyQt5.QtWidgets import QAction, QMenu, QSystemTrayIcon, qApp
 
 connection_type_options = ["UDP", "TCP"]
 server_type_options = [
@@ -26,32 +26,35 @@ server_type_options = [
 ]  # , 'Anti-DDoS', 'Obfuscated Server']
 api = "https://api.nordvpn.com/server"
 ServerInfo = namedtuple(
-    "ServerInfo", "name, country, domain, type, load, categories")
+    "ServerInfo", "name, country, domain, type, load, categories"
+)
 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         """
-        Initialize Global Variables and login GUI
-        Declare directories and paths
+        Initialize global variables and login UI, declare directories and paths
         """
+
         super(MainWindow, self).__init__()
         self.setObjectName("MainWindowObject")
         self.setWindowIcon(QtGui.QIcon(
-            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"))
+            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png")
+        )
         self.base_dir = os.path.join(
             os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
         )  # /home/username/.nordnmconfigs
         self.config_path = os.path.join(
-            os.path.abspath(self.base_dir), ".configs")
+            os.path.abspath(self.base_dir), ".configs"
+        )
         self.scripts_path = os.path.join(
-            os.path.abspath(self.base_dir), ".scripts")
+            os.path.abspath(self.base_dir), ".scripts"
+        )
         self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
         self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
         self.config = configparser.ConfigParser()
         # the following tries to print a status bar message if it fails, but
         # the UI has not yet been initialised
-        self.api_data = self.get_api_data()
         self.username = None
         self.password = None
         self.sudo_password = None
@@ -62,11 +65,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.login_ui()
 
         """
-        Initialize System Tray Icon
+        Initialize system tray icon.
         """
 
         self.trayIcon = QIcon(
-            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png")
+            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
+        )
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(self.trayIcon)
         show_action = QAction("Show NordVPN Network Manager", self)
@@ -85,21 +89,23 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.show()
 
         """
-        Initialize GUI
+        Initialize GUI.
         """
 
         self.show()
 
     def quitAppEvent(self):
         """
-        Quit GUI from system tray
+        Quit GUI from system tray.
         """
+
         qApp.quit()
 
     def closeEvent(self, event):
         """
-        Override default close event
+        Override default close event.
         """
+
         event.ignore()
         self.hide()
         self.tray_icon.showMessage(
@@ -111,15 +117,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def resume(self, activation_reason):
         """
-        Resume from SystemTray
+        Resume from system tray.
         """
+
         if activation_reason == 3:
             self.show()
 
     def main_ui(self):
         """
-        QT form for the main GUI interface
+        Display QT form for the main GUI interface.
         """
+
         self.resize(600, 650)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
@@ -171,7 +179,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.line.sizePolicy().hasHeightForWidth())
+            self.line.sizePolicy().hasHeightForWidth()
+        )
         self.line.setSizePolicy(sizePolicy)
         self.line.setMinimumSize(QtCore.QSize(180, 0))
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -238,7 +247,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.connect_btn.sizePolicy().hasHeightForWidth())
+            self.connect_btn.sizePolicy().hasHeightForWidth()
+        )
         self.connect_btn.setSizePolicy(sizePolicy)
         self.connect_btn.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.connect_btn.setObjectName("connect_btn")
@@ -271,7 +281,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.line_2.sizePolicy().hasHeightForWidth())
+            self.line_2.sizePolicy().hasHeightForWidth()
+        )
         self.line_2.setSizePolicy(sizePolicy)
         self.line_2.setMinimumSize(QtCore.QSize(180, 0))
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
@@ -306,7 +317,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.country_list.addItems(server_country_list)
         self.country_list.itemClicked.connect(self.get_server_list)
         self.server_type_select.currentTextChanged.connect(
-            self.get_server_list)
+            self.get_server_list
+        )
 
         # Button functionality here
         self.connect_btn.clicked.connect(self.connect)
@@ -325,10 +337,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def login_ui(self):
         """
-        Login GUI form
-
-        TODO: Add remember login checkbox + functionality
+        Display login UI form.
         """
+
         self.resize(558, 468)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
@@ -351,7 +362,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint)
+            QtWidgets.QLayout.SetDefaultConstraint
+        )
         self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -368,7 +380,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.user_input.sizePolicy().hasHeightForWidth())
+            self.user_input.sizePolicy().hasHeightForWidth()
+        )
         self.user_input.setSizePolicy(sizePolicy)
         self.user_input.setMaximumSize(QtCore.QSize(200, 30))
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
@@ -412,7 +425,8 @@ class MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
-            self.login_btn.sizePolicy().hasHeightForWidth())
+            self.login_btn.sizePolicy().hasHeightForWidth()
+        )
         self.login_btn.setSizePolicy(sizePolicy)
         self.login_btn.setObjectName("login_btn")
         self.verticalLayout_6.addWidget(self.login_btn)
@@ -438,9 +452,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def check_configs(self):
         """
-        Checks if config directories and files exist and creates them if they do not
-        If username is found in config execute get_credentials()
+        Checks if config directories and files exist and creates them if they
+        do not. If username is found in config, execute get_credentials()
         """
+
         try:
             if not os.path.isdir(self.base_dir):
                 os.mkdir(self.base_dir)
@@ -483,8 +498,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def write_conf(self):
         """
-        Writes config file
+        Write config file.
         """
+
         with open(self.conf_path, "w") as configfile:
             self.config.write(configfile)
 
@@ -492,8 +508,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def parse_conf(self):
         """
-        Parses config and manipulates UI to match
+        Parse config and manipulate UI to match.
         """
+
         self.config.read(self.conf_path)
         if self.config.getboolean("SETTINGS", "mac_randomizer"):
             self.mac_changer_box.setChecked(True)
@@ -504,9 +521,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def verify_credentials(self):
         """
-        Requests a token from NordApi by sending the email and password in json format
-        Verifies responses and updates GUI
+        Request a token from NordApi by sending the email and password in json
+        format. Verify the response and update the GUI.
         """
+
         if self.user_input.text() and self.password_input.text():
             self.username = self.user_input.text()
             self.password = self.password_input.text()
@@ -516,18 +534,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 "Username or password field cannot be empty", 2000
             )
         try:
-
-            # post username and password to api endpoint
+            # Post username and password to API endpoint.
             json_data = {"username": self.username, "password": self.password}
             resp = requests.post(
                 "https://api.nordvpn.com/v1/users/tokens", json=json_data, timeout=5
             )
             if resp.status_code == 201:
-                # check whether credentials should be saved
+                # Check whether credentials should be saved.
                 if self.remember_checkBox.isChecked():
                     try:
                         keyring.set_password(
-                            "NordVPN", self.username, self.password)
+                            "NordVPN", self.username, self.password
+                        )
                         self.config["USER"]["USER_NAME"] = self.username
                         self.write_conf()
                     except Exception as ex:
@@ -535,7 +553,7 @@ class MainWindow(QtWidgets.QMainWindow):
                             "Error accessing keyring", 1000)
                         time.sleep(1)
 
-                # Delete credentials if found
+                # Delete credentials if found.
                 else:
                     try:
                         keyring.delete_password("NordVPN", self.username)
@@ -554,29 +572,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.main_ui()
             else:
                 self.statusbar.showMessage(
-                    "Invalid Username or Password", 2000)
+                    "Invalid Username or Password", 2000
+                )
 
         except Exception as ex:
             self.statusbar.showMessage(
-                "API Error: could not fetch token", 2000)
-            self.get_api_data()
-
-    def get_api_data(self):
-        """
-        Gets json file containing server information
-
-        :return: server information in json format
-        """
-        try:
-            resp = requests.get(api, timeout=5)
-            if resp.status_code == requests.codes.ok:
-                return resp.json()
-            else:
-                # self.statusbar.showMessage("Get API failed", 2000)
-                print("Get API failed (not OK)")
-        except Exception as ex:
-            # self.statusbar.showMessage("Get API failed", 2000)
-            print("Get API failed (exception)")
+                "API Error: could not fetch token", 2000
+            )
 
     def get_country_list(self, api_data):
         """
@@ -1795,8 +1797,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def disconnect_vpn(self):
         """
-        Steps through all of the UI logic to disconnect VPN
+        Step through all of the UI logic to disconnect the VPN.
         """
+
         if self.killswitch_btn.isChecked():
             self.killswitch_btn.setChecked(False)
             self.statusbar.showMessage("Disabling Killswitch...", 5000)
@@ -1822,8 +1825,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def center_on_screen(self):
         """
-        Function to find the center of the users screen
+        Find the center of the user's screen.
         """
+
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
         self.move(
             int((resolution.width() / 2) - (self.frameSize().width() / 2)),
