@@ -680,7 +680,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f'{name}\n'
                     f'Load: {load}%\n'
                     f'Domain: {domain}\n'
-                    f'Categories: {server_categories}'
+                    f'Categories: {categories}'
                 )
 
                 self.domain_list.append(domain)
@@ -690,7 +690,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     domain=domain,
                     type=category_list,
                     load=load,
-                    categories=server_categories,
+                    categories=categories,
                 )
                 self.server_info_list.append(server)
 
@@ -821,6 +821,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def get_connection_info(self, connection_info):
         server_name = ''
         server_type = 0
+        print("Checking connection info...")
         print(connection_info)
 
         if (
@@ -1688,15 +1689,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Disconnect vpn connection in NetworkManager
         """
-        try:
-            self.statusbar.showMessage("Disconnecting...", 1000)
-            self.repaint()
-            connection = subprocess.run(
-                ["nmcli", "connection", "down", self.connection_name]
-            )
-            connection.check_returncode()
-        except subprocess.CalledProcessError:
-            self.statusbar.showMessage("ERROR: Disconnection Failed", 2000)
+        if self.connection_name:
+            try:
+                self.statusbar.showMessage("Disconnecting...", 1000)
+                self.repaint()
+                connection = subprocess.run(
+                    ["nmcli", "connection", "down", self.connection_name]
+                )
+                connection.check_returncode()
+            except subprocess.CalledProcessError:
+                self.statusbar.showMessage("ERROR: Disconnection Failed", 2000)
+        else:
+            self.statusbar.showMessage("Not connected", 2000)
 
     def remove_connection(self):
         """
