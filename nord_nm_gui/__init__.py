@@ -572,7 +572,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 timeout=5
             )
             if resp.status_code == 201:
-                self.statusbar.showMessage("Login Success", 2000)
+                self.statusbar.showMessage("Login success", 2000)
                 self.repaint()
                 # Check whether credentials should be saved.
                 if self.rememberCheckbox.isChecked():
