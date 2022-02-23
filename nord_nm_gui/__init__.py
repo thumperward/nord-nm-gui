@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
-# NordVPN-NetworkManager-GUI a graphical frontend for both NordVPN and the Network Manager
+# NordVPN-NetworkManager-GUI a graphical frontend for both NordVPN and NetworkManager
 # Copyright (C) 2018 Vincent Foster-Mueller
+
 import configparser
 import os
 import shutil
@@ -68,11 +68,10 @@ class MainWindow(QtWidgets.QMainWindow):
         Initialize system tray icon.
         """
 
-        self.trayIcon = QIcon(
-            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
-        )
         self.tray_icon = QSystemTrayIcon(self)
-        self.tray_icon.setIcon(self.trayIcon)
+        self.tray_icon.setIcon(QIcon(
+            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
+        ))
         show_action = QAction("Show NordVPN Network Manager", self)
         quit_action = QAction("Exit", self)
         hide_action = QAction("Minimized", self)
@@ -127,172 +126,192 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Display QT form for the main GUI interface.
         """
-
-        self.resize(600, 650)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy)
-        self.centralwidget = QtWidgets.QWidget(self)
-        self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
-        )
-        self.horizontalLayout_2.addItem(spacerItem)
-        self.title_label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.title_label.sizePolicy().hasHeightForWidth())
-        self.title_label.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(6)
         font.setStyleHint(QtGui.QFont.Monospace)
+
+        self.resize(600, 650)
+        size_policy_1 = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        size_policy_1.setHorizontalStretch(0)
+        size_policy_1.setVerticalStretch(0)
+        size_policy_1.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(size_policy_1)
+
+        central_widget_ = QtWidgets.QWidget(self)
+        central_widget_.setObjectName("central_widget_")
+        self.title_label = QtWidgets.QLabel(central_widget_)
+        size_policy_2 = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
+        size_policy_2.setHorizontalStretch(0)
+        size_policy_2.setVerticalStretch(0)
+        size_policy_2.setHeightForWidth(
+            self.title_label.sizePolicy().hasHeightForWidth()
+        )
+        self.title_label.setSizePolicy(size_policy_2)
         self.title_label.setFont(font)
         self.title_label.setTextFormat(QtCore.Qt.RichText)
         self.title_label.setObjectName("title_label")
-        self.horizontalLayout_2.addWidget(self.title_label)
-        spacerItem1 = QtWidgets.QSpacerItem(
+
+        grid_layout_1 = QtWidgets.QGridLayout(central_widget_)
+        grid_layout_1.setObjectName("grid_layout_1")
+
+        horizontal_layout_2 = QtWidgets.QHBoxLayout()
+        horizontal_layout_2.setObjectName("horizontal_layout_2")
+        spacer_item_1 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.horizontalLayout_2.addItem(spacerItem1)
-        self.gridLayout.addLayout(self.horizontalLayout_2, 0, 0, 1, 2)
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.country_list_label = QtWidgets.QLabel(self.centralwidget)
+        horizontal_layout_2.addItem(spacer_item_1)
+
+        horizontal_layout_2.addWidget(self.title_label)
+        spacer_item_2 = QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
+        )
+        horizontal_layout_2.addItem(spacer_item_2)
+        grid_layout_1.addLayout(horizontal_layout_2, 0, 0, 1, 2)
+
+        vertical_layout_3 = QtWidgets.QVBoxLayout()
+        vertical_layout_3.setObjectName("vertical_layout_3")
+        self.country_list_label = QtWidgets.QLabel(central_widget_)
         self.country_list_label.setObjectName("country_list_label")
-        self.verticalLayout_3.addWidget(self.country_list_label)
-        self.line = QtWidgets.QFrame(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        vertical_layout_3.addWidget(self.country_list_label)
+
+        line_1 = QtWidgets.QFrame(central_widget_)
+        size_policy_3 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.line.sizePolicy().hasHeightForWidth()
+        size_policy_3.setHorizontalStretch(0)
+        size_policy_3.setVerticalStretch(0)
+        size_policy_3.setHeightForWidth(
+            line_1.sizePolicy().hasHeightForWidth()
         )
-        self.line.setSizePolicy(sizePolicy)
-        self.line.setMinimumSize(QtCore.QSize(180, 0))
-        self.line.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line.setObjectName("line")
-        self.verticalLayout_3.addWidget(self.line)
-        self.country_list = QtWidgets.QListWidget(self.centralwidget)
+        line_1.setSizePolicy(size_policy_3)
+        line_1.setMinimumSize(QtCore.QSize(180, 0))
+        line_1.setFrameShape(QtWidgets.QFrame.HLine)
+        line_1.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_1.setObjectName("line")
+        vertical_layout_3.addWidget(line_1)
+
+        self.country_list = QtWidgets.QListWidget(central_widget_)
         self.country_list.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.country_list.setObjectName("country_list")
-        self.verticalLayout_3.addWidget(self.country_list)
-        self.gridLayout.addLayout(self.verticalLayout_3, 1, 0, 1, 1)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.auto_connect_box = QtWidgets.QCheckBox(self.centralwidget)
+        vertical_layout_3.addWidget(self.country_list)
+
+        grid_layout_1.addLayout(vertical_layout_3, 1, 0, 1, 1)
+        horizontal_layout_1 = QtWidgets.QHBoxLayout()
+        horizontal_layout_1.setObjectName("horizontal_layout_1")
+        vertical_layout_1 = QtWidgets.QVBoxLayout()
+        vertical_layout_1.setObjectName("vertical_layout_1")
+
+        self.auto_connect_box = QtWidgets.QCheckBox(central_widget_)
         self.auto_connect_box.setObjectName("auto_connect_box")
-        self.verticalLayout.addWidget(self.auto_connect_box)
-        self.mac_changer_box = QtWidgets.QCheckBox(self.centralwidget)
+        vertical_layout_1.addWidget(self.auto_connect_box)
+
+        self.mac_changer_box = QtWidgets.QCheckBox(central_widget_)
         self.mac_changer_box.setObjectName("mac_changer_box")
-        self.verticalLayout.addWidget(self.mac_changer_box)
-        self.killswitch_btn = QtWidgets.QCheckBox(self.centralwidget)
-        self.killswitch_btn.setObjectName("killswitch_btn")
-        self.verticalLayout.addWidget(self.killswitch_btn)
-        self.horizontalLayout.addLayout(self.verticalLayout)
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.server_type_select = QtWidgets.QComboBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        vertical_layout_1.addWidget(self.mac_changer_box)
+
+        self.kill_switch_button = QtWidgets.QCheckBox(central_widget_)
+        self.kill_switch_button.setObjectName("kill_switch_button")
+        vertical_layout_1.addWidget(self.kill_switch_button)
+
+        horizontal_layout_1.addLayout(vertical_layout_1)
+        vertical_layout_2 = QtWidgets.QVBoxLayout()
+        vertical_layout_2.setObjectName("vertical_layout_2")
+        self.server_type_select = QtWidgets.QComboBox(central_widget_)
+        size_policy_4 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
+        size_policy_4.setHorizontalStretch(0)
+        size_policy_4.setVerticalStretch(0)
+        size_policy_4.setHeightForWidth(
             self.server_type_select.sizePolicy().hasHeightForWidth()
         )
-        self.server_type_select.setSizePolicy(sizePolicy)
+        self.server_type_select.setSizePolicy(size_policy_4)
         self.server_type_select.setObjectName("server_type_select")
-        self.verticalLayout_2.addWidget(self.server_type_select)
-        self.connection_type_select = QtWidgets.QComboBox(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        vertical_layout_2.addWidget(self.server_type_select)
+        self.connection_type_select = QtWidgets.QComboBox(central_widget_)
+        size_policy_5 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
+        size_policy_5.setHorizontalStretch(0)
+        size_policy_5.setVerticalStretch(0)
+        size_policy_5.setHeightForWidth(
             self.connection_type_select.sizePolicy().hasHeightForWidth()
         )
-        self.connection_type_select.setSizePolicy(sizePolicy)
+        self.connection_type_select.setSizePolicy(size_policy_5)
         self.connection_type_select.setObjectName("connection_type_select")
-        self.verticalLayout_2.addWidget(self.connection_type_select)
-        self.horizontalLayout.addLayout(self.verticalLayout_2)
-        spacerItem2 = QtWidgets.QSpacerItem(
+        vertical_layout_2.addWidget(self.connection_type_select)
+
+        horizontal_layout_1.addLayout(vertical_layout_2)
+        spacer_item_3 = QtWidgets.QSpacerItem(
             40,
             20,
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Minimum,
         )
-        self.horizontalLayout.addItem(spacerItem2)
-        self.connect_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        horizontal_layout_1.addItem(spacer_item_3)
+
+        self.connect_button = QtWidgets.QPushButton(central_widget_)
+        size_policy_6 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.connect_btn.sizePolicy().hasHeightForWidth()
+        size_policy_6.setHorizontalStretch(0)
+        size_policy_6.setVerticalStretch(0)
+        size_policy_6.setHeightForWidth(
+            self.connect_button.sizePolicy().hasHeightForWidth()
         )
-        self.connect_btn.setSizePolicy(sizePolicy)
-        self.connect_btn.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.connect_btn.setObjectName("connect_btn")
-        self.horizontalLayout.addWidget(self.connect_btn)
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)
-        self.disconnect_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.disconnect_btn.hide()
-        sizePolicy = QtWidgets.QSizePolicy(
+        self.connect_button.setSizePolicy(size_policy_6)
+        self.connect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.connect_button.setObjectName("connect_button")
+        horizontal_layout_1.addWidget(self.connect_button)
+
+        grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+
+        self.disconnect_button = QtWidgets.QPushButton(central_widget_)
+        self.disconnect_button.hide()
+        size_policy_7 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.disconnect_btn.sizePolicy().hasHeightForWidth()
+        size_policy_7.setHorizontalStretch(0)
+        size_policy_7.setVerticalStretch(0)
+        size_policy_7.setHeightForWidth(
+            self.disconnect_button.sizePolicy().hasHeightForWidth()
         )
-        self.disconnect_btn.setSizePolicy(sizePolicy)
-        self.disconnect_btn.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.disconnect_btn.setObjectName("disconnect_btn")
-        self.horizontalLayout.addWidget(self.disconnect_btn)
-        self.gridLayout.addLayout(self.horizontalLayout, 2, 0, 1, 2)
-        self.verticalLayout_4 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_4.setObjectName("verticalLayout_4")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setObjectName("label")
-        self.verticalLayout_4.addWidget(self.label)
-        self.line_2 = QtWidgets.QFrame(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        self.disconnect_button.setSizePolicy(size_policy_7)
+        self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.disconnect_button.setObjectName("disconnect_button")
+        horizontal_layout_1.addWidget(self.disconnect_button)
+
+        # BROKEN: already added to grid_layout_1 above
+        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+
+        vertical_layout_4 = QtWidgets.QVBoxLayout()
+        vertical_layout_4.setObjectName("vertical_layout_4")
+        self.central_widget_label = QtWidgets.QLabel(central_widget_)
+        self.central_widget_label.setObjectName("central_widget_label")
+        vertical_layout_4.addWidget(self.central_widget_label)
+        line_2 = QtWidgets.QFrame(central_widget_)
+        size_policy_8 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.line_2.sizePolicy().hasHeightForWidth()
+        size_policy_8.setHorizontalStretch(0)
+        size_policy_8.setVerticalStretch(0)
+        size_policy_8.setHeightForWidth(
+            line_2.sizePolicy().hasHeightForWidth()
         )
-        self.line_2.setSizePolicy(sizePolicy)
-        self.line_2.setMinimumSize(QtCore.QSize(180, 0))
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("line_2")
-        self.verticalLayout_4.addWidget(self.line_2)
-        self.server_list = QtWidgets.QListWidget(self.centralwidget)
+        line_2.setSizePolicy(size_policy_8)
+        line_2.setMinimumSize(QtCore.QSize(180, 0))
+        line_2.setFrameShape(QtWidgets.QFrame.HLine)
+        line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line_2.setObjectName("line_2")
+        vertical_layout_4.addWidget(line_2)
+        self.server_list = QtWidgets.QListWidget(central_widget_)
         self.server_list.setObjectName("server_list")
-        self.verticalLayout_4.addWidget(self.server_list)
-        self.gridLayout.addLayout(self.verticalLayout_4, 1, 1, 1, 1)
+        vertical_layout_4.addWidget(self.server_list)
+        grid_layout_1.addLayout(vertical_layout_4, 1, 1, 1, 1)
         self.title_label.raise_()
         self.server_list.raise_()
         self.country_list.raise_()
@@ -301,16 +320,27 @@ class MainWindow(QtWidgets.QMainWindow):
         self.server_type_select.raise_()
         self.connection_type_select.raise_()
         self.country_list_label.raise_()
-        self.label.raise_()
-        self.line.raise_()
-        self.line_2.raise_()
-        self.killswitch_btn.raise_()
-        self.setCentralWidget(self.centralwidget)
+        self.central_widget_label.raise_()
+        line_1.raise_()
+        line_2.raise_()
+        self.kill_switch_button.raise_()
+        self.setCentralWidget(central_widget_)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
 
         # Begin of UI logic
+
+        try:
+            resp = requests.get(api, timeout=5)
+            if resp.status_code == requests.codes.ok:
+                self.api_data = resp.json()
+            else:
+                print(resp.status_code, resp.reason)
+                sys.exit(1)
+        except Exception as e:
+            print(e)
+
         server_country_list = self.get_country_list(self.api_data)
         self.connection_type_select.addItems(connection_type_options)
         self.server_type_select.addItems(server_type_options)
@@ -321,10 +351,10 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Button functionality here
-        self.connect_btn.clicked.connect(self.connect)
-        self.disconnect_btn.clicked.connect(self.disconnect_vpn)
+        self.connect_button.clicked.connect(self.connect)
+        self.disconnect_button.clicked.connect(self.disconnect_vpn)
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
-        self.killswitch_btn.clicked.connect(self.disable_kill_switch)
+        self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
         self.parse_conf()
         self.repaint()
@@ -341,102 +371,102 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         self.resize(558, 468)
-        sizePolicy = QtWidgets.QSizePolicy(
+        size_policy_9 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy)
-        self.setWindowTitle(" ")
-        self.centralwidget = QtWidgets.QWidget(self)
-        self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
-        self.verticalLayout_2 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.nord_image = QtWidgets.QLabel(self.centralwidget)
-        self.nord_image.setObjectName("nord_image")
-        self.verticalLayout_2.addWidget(self.nord_image)
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSizeConstraint(
+        size_policy_9.setHorizontalStretch(0)
+        size_policy_9.setVerticalStretch(0)
+        size_policy_9.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(size_policy_9)
+        self.setWindowTitle("NordVPN login")
+        central_widget_ = QtWidgets.QWidget(self)
+        central_widget_.setObjectName("central_widget_")
+        grid_layout_1 = QtWidgets.QGridLayout(central_widget_)
+        grid_layout_1.setObjectName("grid_layout_1")
+        vertical_layout_5 = QtWidgets.QVBoxLayout()
+        vertical_layout_5.setObjectName("vertical_layout_5")
+        self.nordImageWidget = QtWidgets.QLabel(central_widget_)
+        self.nordImageWidget.setObjectName("nordImageWidget")
+        vertical_layout_5.addWidget(self.nordImageWidget)
+        horizontal_layout_3 = QtWidgets.QHBoxLayout()
+        horizontal_layout_3.setObjectName("horizontal_layout_3")
+        vertical_layout_1 = QtWidgets.QVBoxLayout()
+        vertical_layout_1.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint
         )
-        self.verticalLayout.setContentsMargins(-1, 0, -1, -1)
-        self.verticalLayout.setSpacing(6)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.user_label = QtWidgets.QLabel(self.centralwidget)
-        self.user_label.setObjectName("user_label")
-        self.horizontalLayout.addWidget(self.user_label)
-        self.user_input = QtWidgets.QLineEdit(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        vertical_layout_1.setContentsMargins(-1, 0, -1, -1)
+        vertical_layout_1.setSpacing(6)
+        vertical_layout_1.setObjectName("vertical_layout_1")
+        horizontal_layout_1 = QtWidgets.QHBoxLayout()
+        horizontal_layout_1.setObjectName("horizontal_layout_1")
+        self.usernameLabel = QtWidgets.QLabel(central_widget_)
+        self.usernameLabel.setObjectName("usernameLabel")
+        horizontal_layout_1.addWidget(self.usernameLabel)
+        self.user_input = QtWidgets.QLineEdit(central_widget_)
+        size_policy_10 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
+        size_policy_10.setHorizontalStretch(0)
+        size_policy_10.setVerticalStretch(0)
+        size_policy_10.setHeightForWidth(
             self.user_input.sizePolicy().hasHeightForWidth()
         )
-        self.user_input.setSizePolicy(sizePolicy)
+        self.user_input.setSizePolicy(size_policy_10)
         self.user_input.setMaximumSize(QtCore.QSize(200, 30))
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
         self.user_input.setAlignment(QtCore.Qt.AlignCenter)
         self.user_input.setObjectName("user_input")
-        self.horizontalLayout.addWidget(self.user_input)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.password_label = QtWidgets.QLabel(self.centralwidget)
-        self.password_label.setObjectName("password_label")
-        self.horizontalLayout_2.addWidget(self.password_label)
-        self.password_input = QtWidgets.QLineEdit(self.centralwidget)
+        horizontal_layout_1.addWidget(self.user_input)
+        vertical_layout_1.addLayout(horizontal_layout_1)
+        horizontal_layout_2 = QtWidgets.QHBoxLayout()
+        horizontal_layout_2.setObjectName("horizontal_layout_2")
+        self.passwordLabel = QtWidgets.QLabel(central_widget_)
+        self.passwordLabel.setObjectName("passwordLabel")
+        horizontal_layout_2.addWidget(self.passwordLabel)
+        self.password_input = QtWidgets.QLineEdit(central_widget_)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
-        sizePolicy = QtWidgets.QSizePolicy(
+        size_policy_11 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
+        size_policy_11.setHorizontalStretch(0)
+        size_policy_11.setVerticalStretch(0)
+        size_policy_11.setHeightForWidth(
             self.password_input.sizePolicy().hasHeightForWidth()
         )
-        self.password_input.setSizePolicy(sizePolicy)
+        self.password_input.setSizePolicy(size_policy_11)
         self.password_input.setMaximumSize(QtCore.QSize(200, 30))
         self.password_input.setAlignment(QtCore.Qt.AlignCenter)
         self.password_input.setObjectName("password_input")
-        self.horizontalLayout_2.addWidget(self.password_input)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_3.addLayout(self.verticalLayout)
-        spacerItem = QtWidgets.QSpacerItem(
+        horizontal_layout_2.addWidget(self.password_input)
+        vertical_layout_1.addLayout(horizontal_layout_2)
+        horizontal_layout_3.addLayout(vertical_layout_1)
+        spacer_item_4 = QtWidgets.QSpacerItem(
             57, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
         )
-        self.horizontalLayout_3.addItem(spacerItem)
-        self.verticalLayout_6 = QtWidgets.QVBoxLayout()
-        self.verticalLayout_6.setObjectName("verticalLayout_6")
-        self.login_btn = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(
+        horizontal_layout_3.addItem(spacer_item_4)
+        vertical_layout_6 = QtWidgets.QVBoxLayout()
+        vertical_layout_6.setObjectName("vertical_layout_6")
+        self.loginButton = QtWidgets.QPushButton(central_widget_)
+        size_policy_12 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
         )
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(
-            self.login_btn.sizePolicy().hasHeightForWidth()
+        size_policy_12.setHorizontalStretch(0)
+        size_policy_12.setVerticalStretch(0)
+        size_policy_12.setHeightForWidth(
+            self.loginButton.sizePolicy().hasHeightForWidth()
         )
-        self.login_btn.setSizePolicy(sizePolicy)
-        self.login_btn.setObjectName("login_btn")
-        self.verticalLayout_6.addWidget(self.login_btn)
-        self.remember_checkBox = QtWidgets.QCheckBox(self.centralwidget)
-        self.remember_checkBox.setObjectName("remember_checkBox")
-        self.verticalLayout_6.addWidget(self.remember_checkBox)
-        self.horizontalLayout_3.addLayout(self.verticalLayout_6)
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
-        self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
-        self.setCentralWidget(self.centralwidget)
+        self.loginButton.setSizePolicy(size_policy_12)
+        self.loginButton.setObjectName("loginButton")
+        vertical_layout_6.addWidget(self.loginButton)
+        self.rememberCheckbox = QtWidgets.QCheckBox(central_widget_)
+        self.rememberCheckbox.setObjectName("rememberCheckbox")
+        vertical_layout_6.addWidget(self.rememberCheckbox)
+        horizontal_layout_3.addLayout(vertical_layout_6)
+        vertical_layout_5.addLayout(horizontal_layout_3)
+        grid_layout_1.addLayout(vertical_layout_5, 0, 0, 1, 1)
+        self.setCentralWidget(central_widget_)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
@@ -447,8 +477,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.check_configs()  # do configs exist else create
 
         # buttons here
-        self.password_input.returnPressed.connect(self.login_btn.click)
-        self.login_btn.clicked.connect(self.verify_credentials)
+        self.password_input.returnPressed.connect(self.loginButton.click)
+        self.loginButton.clicked.connect(self.verify_credentials)
 
     def check_configs(self):
         """
@@ -479,7 +509,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ):
                 self.statusbar.showMessage("Fetching Saved Credentials", 1000)
                 self.username = self.config.get("USER", "USER_NAME")
-                self.remember_checkBox.setChecked(True)
+                self.rememberCheckbox.setChecked(True)
                 self.user_input.setText(self.username)
                 self.get_credentials()
 
@@ -515,7 +545,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.config.getboolean("SETTINGS", "mac_randomizer"):
             self.mac_changer_box.setChecked(True)
         if self.config.getboolean("SETTINGS", "kill_switch"):
-            self.killswitch_btn.setChecked(True)
+            self.kill_switch_button.setChecked(True)
         if self.config.getboolean("SETTINGS", "auto_connect"):
             self.auto_connect_box.setChecked(True)
 
@@ -537,11 +567,15 @@ class MainWindow(QtWidgets.QMainWindow):
             # Post username and password to API endpoint.
             json_data = {"username": self.username, "password": self.password}
             resp = requests.post(
-                "https://api.nordvpn.com/v1/users/tokens", json=json_data, timeout=5
+                "https://api.nordvpn.com/v1/users/tokens",
+                json=json_data,
+                timeout=5
             )
             if resp.status_code == 201:
+                self.statusbar.showMessage("Login Success", 2000)
+                self.repaint()
                 # Check whether credentials should be saved.
-                if self.remember_checkBox.isChecked():
+                if self.rememberCheckbox.isChecked():
                     try:
                         keyring.set_password(
                             "NordVPN", self.username, self.password
@@ -550,27 +584,20 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.write_conf()
                     except Exception as ex:
                         self.statusbar.showMessage(
-                            "Error accessing keyring", 1000)
-                        time.sleep(1)
-
-                # Delete credentials if found.
-                else:
-                    try:
-                        keyring.delete_password("NordVPN", self.username)
-                        self.config["USER"]["USER_NAME"] = "None"
-                        self.write_conf()
-                    except Exception as ex:
-                        self.statusbar.showMessage(
-                            "No saved credentials to delete", 1000
+                            "Error accessing keyring", 1000
                         )
-                        time.sleep(0.5)
 
-                self.statusbar.showMessage("Login Success", 2000)
-                self.repaint()
-                time.sleep(0.5)
+                # Otherwise, delete credentials if found.
+                elif keyring.get_credential("NordVPN", self.username):
+                    keyring.delete_password("NordVPN", self.username)
+                    self.config["USER"]["USER_NAME"] = "None"
+                    self.write_conf()
+
                 self.hide()
                 self.main_ui()
             else:
+                # Debug why the response failed
+                print(resp.status_code, resp.reason, resp.text)
                 self.statusbar.showMessage(
                     "Invalid Username or Password", 2000
                 )
@@ -594,12 +621,41 @@ class MainWindow(QtWidgets.QMainWindow):
                 server_country_list.append(country)
         return sorted(server_country_list)
 
+    def get_server_categories(self, categories):
+        category_string = ""
+        category_list = []
+        for category in categories:
+            if category["name"] == "Standard VPN servers":
+                category_string += "Standard "
+                category_list.append("Standard")
+            elif category["name"] == "P2P":
+                category_string += f'{category["name"]} '
+                category_list.append("P2P")
+            elif category["name"] == "Anti-DDoS":
+                category_string += f'{category["name"]} '
+                category_list.append("Anti-DDoS")
+            elif category["name"] == "Obfuscated Servers":
+                category_string += "Obfuscated"
+                category_list.append("Obfuscated Server")
+            elif category["name"] == "Dedicated IP":
+                category_string += f'{category["name"]} '
+                category_list.append("Dedicated IP")
+            elif category["name"] == "Double VPN":
+                category_string += f'{category["name"]} '
+                category_list.append("Double VPN")
+            elif category["name"] == "Onion Over VPN":
+                category_string += f'{category["name"]} '
+                category_list.append("TOR over VPN")
+            else:
+                category_string += f'{category["name"]} '
+        return category_string, category_list
+
     def get_server_list(self):
         """
-        Displays server information in the server_list based on the given filter
-        (server_type, connection_type, current_country)
-        TODO: Rework this into a class
+        Display server information in the server_list based on the given filter
+        (server_type, connection_type, current_country).
         """
+
         filtered = (
             self.country_list.currentItem().text(),
             self.server_type_select.currentText(),
@@ -614,152 +670,96 @@ class MainWindow(QtWidgets.QMainWindow):
             load = server["load"]
             domain = server["domain"]
             country = server["country"]
-            categories = server["categories"]
+            categories, category_list = self.get_server_categories(
+                server["categories"]
+            )
 
-            server_categories = ""
-            server_category_list = []
-            for category in categories:
-                if category["name"] == "Standard VPN servers":
-                    server_categories += "Standard "
-                    server_category_list.append("Standard")
-                elif category["name"] == "P2P":
-                    server_categories += f'{category["name"]} '
-                    server_category_list.append("P2P")
-                elif category["name"] == "Anti-DDoS":
-                    server_categories += f'{category["name"]} '
-                    server_category_list.append("Anti-DDoS")
-                elif category["name"] == "Obfuscated Servers":
-                    server_categories += "Obfuscated"
-                    server_category_list.append("Obfuscated Server")
-                elif category["name"] == "Dedicated IP":
-                    server_categories += f'{category["name"]} '
-                    server_category_list.append("Dedicated IP")
-                elif category["name"] == "Double VPN":
-                    server_categories += f'{category["name"]} '
-                    server_category_list.append("Double VPN")
-                elif category["name"] == "Onion Over VPN":
-                    server_categories += f'{category["name"]} '
-                    server_category_list.append("TOR over VPN")
-                else:
-                    server_categories += f'{category["name"]} '
-            if (
-                (name not in server_name_list)
-                and (country == filtered[0])
-                and (filtered[1] in server_category_list)
-            ):
+            if name not in server_name_list and country == filtered[0] and filtered[1] in category_list:
                 server_name_list.append(
-                    name
-                    + "\n"
-                    + "Load: "
-                    + str(load)
-                    + "%\n"
-                    + "Domain: "
-                    + domain
-                    + "\n"
-                    + "Categories: "
-                    + server_categories
+                    f'{name}\n'
+                    f'Load: {load}%\n'
+                    f'Domain: {domain}\n'
+                    f'Categories: {server_categories}'
                 )
+
                 self.domain_list.append(domain)
                 server = ServerInfo(
                     name=name,
                     country=country,
                     domain=domain,
-                    type=server_category_list,
+                    type=category_list,
                     load=load,
                     categories=server_categories,
                 )
                 self.server_info_list.append(server)
 
         if server_name_list:
-            # sorts lists to be in the same order
+            # Sort lists to be in the same order.
+
             server_name_list, self.domain_list, self.server_info_list = (
                 list(x)
-                for x in zip(
-                    *sorted(
-                        zip(server_name_list, self.domain_list,
-                            self.server_info_list),
-                        key=lambda x: x[2].load,
-                    )
-                )
+                for x in zip(*sorted(
+                    zip(server_name_list, self.domain_list, self.server_info_list),
+                    key=lambda x: x[2].load,
+                ))
             )
             self.server_list.addItems(server_name_list)
         else:
             self.server_list.addItem("No Servers Found")
+
         QtWidgets.QApplication.processEvents()
         self.retranslateUi()
 
     def get_ovpn(self):
         """
-        Gets ovpn file from nord servers and saves it to a temporary location
+        Get ovpn file from nord servers and save it to a temporary location.
         """
+
         # https://downloads.nordcdn.com/configs/files/ovpn_udp/servers/sg173.nordvpn.com.udp.ovpn
         self.ovpn_path = None
         ovpn_url = None
-        udp_url = "https://downloads.nordcdn.com/configs/files/ovpn_udp/servers/"
-        tcp_url = "https://downloads.nordcdn.com/configs/files/ovpn_tcp/servers/"
-        tcp_xor_url = (
-            "https://downloads.nordcdn.com/configs/files/ovpn_xor_tcp/servers/"
-        )
 
-        if (self.server_type_select.currentText() == "Obfuscated Server") and (
-            self.connection_type_select.currentText() == "UDP"
-        ):
-            udp_xor_url = (
-                "https://downloads.nordcdn.com/configs/files/ovpn_xor_udp/servers/"
-            )
-            ovpn_url = udp_xor_url
-        elif (self.server_type_select.currentText() == "Obfuscated Server") and (
-            self.connection_type_select.currentText() == "TCP"
-        ):
-            ovpn_url = tcp_xor_url
-        elif (self.server_type_select.currentText() != "Obfuscated Server") and (
-            self.connection_type_select.currentText() == "UDP"
-        ):
-            ovpn_url = udp_url
-        elif (self.server_type_select.currentText() != "Obfuscated Server") and (
-            self.connection_type_select.currentText() == "TCP"
-        ):
-            ovpn_url = tcp_url
+        configs_path = "https://downloads.nordcdn.com/configs/files"
+        if self.server_type_select.currentText() == "Obfuscated Server" and self.connection_type_select.currentText() == "UDP":
+            ovpn_url = f"{configs_path}/ovpn_xor_udp/servers/"
+        elif self.server_type_select.currentText() == "Obfuscated Server" and self.connection_type_select.currentText() == "TCP":
+            ovpn_url = f"{configs_path}/ovpn_xor_tcp/servers/"
+        elif self.server_type_select.currentText() != "Obfuscated Server" and self.connection_type_select.currentText() == "UDP":
+            ovpn_url = f"{configs_path}/ovpn_udp/servers/"
+        elif self.server_type_select.currentText() != "Obfuscated Server" and self.connection_type_select.currentText() == "TCP":
+            ovpn_url = f"{configs_path}/ovpn_tcp/servers/"
 
+        current_server = self.domain_list[self.server_list.currentRow()]
         if self.connection_type_select.currentText() == "UDP":
-            filename = self.domain_list[self.server_list.currentRow(
-            )] + ".udp.ovpn"
-            ovpn_file = requests.get(ovpn_url + filename, stream=True)
-            if ovpn_file.status_code == requests.codes.ok:
-                self.ovpn_path = os.path.join(self.config_path, filename)
-                with open(self.ovpn_path, "wb") as out_file:
-                    shutil.copyfileobj(ovpn_file.raw, out_file)
-            else:
-                self.statusbar.showMessage(
-                    "Error fetching configuration files", 2000)
-
+            filename = f'{current_server}.udp.ovpn'
         elif self.connection_type_select.currentText() == "TCP":
-            filename = self.domain_list[self.server_list.currentRow(
-            )] + ".tcp.ovpn"
-            ovpn_file = requests.get(ovpn_url + filename, stream=True)
-            if ovpn_file.status_code == requests.codes.ok:
-                self.ovpn_path = os.path.join(self.config_path, filename)
-                with open(self.ovpn_path, "wb") as out_file:
-                    shutil.copyfileobj(ovpn_file.raw, out_file)
-            else:
-                self.statusbar.showMessage(
-                    "Error fetching configuration files", 2000)
+            filename = f'{current_server}.tcp.ovpn'
+
+        ovpn_file = requests.get(ovpn_url + filename, stream=True)
+        if ovpn_file.status_code == requests.codes.ok:
+            self.ovpn_path = os.path.join(self.config_path, filename)
+            with open(self.ovpn_path, "wb") as out_file:
+                shutil.copyfileobj(ovpn_file.raw, out_file)
+        else:
+            self.statusbar.showMessage(
+                "Error fetching configuration files", 2000
+            )
 
         self.server_list.setFocus()
 
     def import_ovpn(self):
         """
-        Renames and imports the ovpn to the Network Manager
-        Cleans up the temporary files
+        Rename and import OVPN file to NetworkManager and clean up temp files.
         """
+
         try:
             self.statusbar.showMessage("Importing Connection...")
             self.repaint()
             self.connection_name = self.generate_connection_name()
-            ovpn_file = self.connection_name + ".ovpn"
-            path = os.path.join(
-                self.config_path, ovpn_file
-            )  # changes name from default
+            ovpn_file = f'{self.connection_name}.ovpn'
+
+            # changes name from default
+            path = os.path.join(self.config_path, ovpn_file)
             shutil.copy(self.ovpn_path, path)
             os.remove(self.ovpn_path)
             output = subprocess.run(
@@ -771,101 +771,96 @@ class MainWindow(QtWidgets.QMainWindow):
         except subprocess.CalledProcessError:
             self.statusbar.showMessage("ERROR: Importing VPN configuration")
 
+    def run_nmcli(self, config_option, config_value):
+        try:
+            process = subprocess.run([
+                "nmcli",
+                "connection",
+                "modify",
+                self.connection_name,
+                config_option,
+                config_value,
+            ])
+            process.check_returncode()
+            return process
+        except subprocess.CalledProcessError:
+            self.statusbar.showMessage("ERROR: nmcli command failed", 2000)
+
     def add_secrets(self):
         """
-        Adds the username and Password to the configuration
+        Add the username and password to the NetworkManager configuration.
         """
-        try:
-            self.statusbar.showMessage("Adding Secrets...", 1000)
-            self.repaint()
-            password_flag = subprocess.run(
-                [
-                    "nmcli",
-                    "connection",
-                    "modify",
-                    self.connection_name,
-                    "+vpn.data",
-                    "password-flags=0",
-                ]
-            )
-            password_flag.check_returncode()
-            secrets = subprocess.run(
-                [
-                    "nmcli",
-                    "connection",
-                    "modify",
-                    self.connection_name,
-                    "+vpn.secrets",
-                    f'password={self.password}',
-                ]
-            )
 
-            secrets.check_returncode()
-            user_secret = subprocess.run(
-                [
-                    "nmcli",
-                    "connection",
-                    "modify",
-                    self.connection_name,
-                    "+vpn.data",
-                    f'username={self.username}',
-                ]
-            )
+        self.statusbar.showMessage("Adding Secrets...", 1000)
+        self.repaint()
 
-            user_secret.check_returncode()
-            disable_ipv6 = subprocess.run(
-                [
-                    "nmcli",
-                    "connection",
-                    "modify",
-                    self.connection_name,
-                    "+ipv6.method",
-                    "ignore",
-                ]
-            )
-            disable_ipv6.check_returncode()
-            password_flag = subprocess.run(
-                [
-                    "nmcli",
-                    "connection",
-                    "modify",
-                    self.connection_name,
-                    "+vpn.data",
-                    "password-flags=0",
-                ]
-            )
-            password_flag.check_returncode()
-        except subprocess.CalledProcessError:
-            self.statusbar.showMessage(
-                "ERROR: Secrets could not be added", 2000)
+        password_flag = self.run_nmcli("+vpn.data", "password-flags=0")
+        secrets = self.run_nmcli("+vpn.secrets", f'password={self.password}')
+        user_secret = self.run_nmcli("+vpn.data", f'username={self.username}')
+        disable_ipv6 = self.run_nmcli("+ipv6.method", "ignore")
+        password_flag = self.run_nmcli("+vpn.data", "password-flags=0")
 
     def generate_connection_name(self):
         """
-        Generates the name of the ovpn file
+        Generate the name of the OVPN file.
         """
+
         server = self.server_info_list[self.server_list.currentRow()]
         category_name = ""
         for i, category in enumerate(server.type):
             if i > 0:
-                category_name += " | " + category
+                category_name += f' | {category}'
             else:
                 category_name = category
 
-        connection_name = (
-            server.name
-            + " ["
-            + category_name
-            + "] ["
-            + self.connection_type_select.currentText()
-            + "]"
+        return (
+            f"{server.name} [{category_name}] [{self.connection_type_select.currentText()}]"
         )
-        return connection_name
+
+    def get_connection_info(self, connection_info):
+        server_name = ''
+        server_type = 0
+        print(connection_info)
+
+        if (
+            "[Standard" in connection_info or "[Standard]" in connection_info
+            or (
+                "[Double" not in connection_info
+                and "[TOR" not in connection_info
+                and "[Dedicated" in connection_info
+            )
+        ):
+            # Normal servers
+            server_name = f"{connection_info[0]} {connection_info[1]}"
+        elif "[Double" in connection_info:
+            # Double VPN server
+            server_name = f'{connection_info[0]} - {connection_info[2]} {connection_info[3]}'
+        elif "[TOR" in connection_info:
+            # Onion Over VPN
+            server_name = f'{connection_info[0]} {connection_info[1]} {connection_info[2]}'
+
+        if "[Standard" in connection_info or "[Standard]" in connection_info:
+            server_type = 1
+        elif "[Double" in connection_info:
+            server_type = 2
+        elif "[TOR" in connection_info:
+            server_type = 3
+        elif "[Dedicated" in connection_info:
+            server_type = 4
+        elif "[TCP]" in connection_info:
+            server_type = 1
+
+        print(server_name, server_type)
+        return server_name, server_type
 
     def get_active_vpn(self):
         """
-        Queries the Network Manager for the current connection.
-        If a current Nord connection it will set the UI to the appropriate state
+        Query NetworkManager for the current connection.
+        If a current connection is found, set the UI to the appropriate state.
+
+        :return Bool
         """
+
         try:
             output = subprocess.run(
                 [
@@ -882,106 +877,57 @@ class MainWindow(QtWidgets.QMainWindow):
                 stdout=subprocess.PIPE,
             )
             output.check_returncode()
-            lines = output.stdout.decode("utf-8").split("\n")
 
-            for line in lines:
-                if line:
+            for line in output.stdout.decode("utf-8").split("\n"):
+                try:
                     elements = line.strip().split(":")
+                    connection_name = elements[1]
+                    connection_info = connection_name.split()
+                    country = connection_info[0]
+                    server_name, server_type = self.get_connection_info(
+                        connection_info
+                    )
 
-                    if elements[0] == "vpn":
-                        connection_info = elements[1].split()
-                        connection_name = elements[1]
-                        country = connection_info[0]
-                        print(connection_info)
-                        if (
-                            "[Standard" in connection_info
-                            or "[Standard]" in connection_info
-                        ):  # Normal servers
-                            server_name = connection_info[0] + \
-                                " " + connection_info[1]
-                        elif "[Double" in connection_info:  # Double VPN server
-                            server_name = (
-                                connection_info[0]
-                                + " "
-                                + "- "
-                                + connection_info[2]
-                                + " "
-                                + connection_info[3]
-                            )
-                        elif "[TOR" in connection_info:  # Onion Over VPN
-                            server_name = (
-                                connection_info[0]
-                                + " "
-                                + connection_info[1]
-                                + " "
-                                + connection_info[2]
-                            )
-                        elif "[Dedicated" in connection_info:  # Dedicated IP
-                            server_name = connection_info[0] + \
-                                " " + connection_info[1]
-                        if self.server_info_list:  # vpn connected successfully
-                            for server in self.server_info_list:
-                                if server_name == server.name:
-                                    self.connected_server = server.name
-                                    return True
-                        elif (
-                            not self.server_info_list
-                        ):  # existing Nordvpn connection found
-                            self.connect_btn.hide()
-                            self.disconnect_btn.show()
-                            self.statusbar.showMessage(
-                                "Fetching Active Server...", 2000
-                            )
-                            self.repaint()
-                            item = self.country_list.findItems(
-                                country, QtCore.Qt.MatchExactly
-                            )
-                            self.country_list.setCurrentItem(item[0])
-                            if (
-                                "[Standard" in connection_info
-                                or "[Standard]" in connection_info
-                            ):
-                                self.server_type_select.setCurrentIndex(1)
-                            if "[Double" in connection_info:
-                                self.server_type_select.setCurrentIndex(2)
-                            if "[TOR" in connection_info:
-                                self.server_type_select.setCurrentIndex(3)
-                            if "[Dedicated" in connection_info:
-                                self.server_type_select.setCurrentIndex(4)
-                            if "[TCP]" in connection_info:
-                                self.connection_type_select.setCurrentIndex(1)
-                            self.get_server_list()
-                            for server in self.server_info_list:
-                                if server_name == server.name:
-                                    server_list_item = self.server_list.findItems(
-                                        server_name
-                                        + "\n"
-                                        + "Load: "
-                                        + str(server.load)
-                                        + "%\n"
-                                        + "Domain: "
-                                        + server.domain
-                                        + "\n"
-                                        + "Categories: "
-                                        + server.categories,
-                                        QtCore.Qt.MatchExactly,
-                                    )
-                                    self.server_list.setCurrentItem(
-                                        server_list_item[0])
-                                    self.server_list.setFocus()
-                                    self.connection_name = connection_name
-                                    self.connected_server = server.name
-                                    return False
-                        else:
-                            self.statusbar.showMessage(
-                                "Warning! Unknown VPN connection found", 2000
-                            )
-                            self.repaint()
-                            return False
+                    if self.server_info_list:  # vpn connected successfully
+                        for server in self.server_info_list:
+                            if server_name == server.name:
+                                self.connected_server = server.name
+                                return True
+                    else:
+                        self.connect_button.hide()
+                        self.disconnect_button.show()
+                        self.statusbar.showMessage(
+                            "Fetching Active Server...", 2000
+                        )
+                        self.repaint()
+                        item = self.country_list.findItems(
+                            country, QtCore.Qt.MatchExactly
+                        )
+                        self.country_list.setCurrentItem(item[0])
+
+                        self.server_type_select.setCurrentIndex(server_type)
+
+                        self.get_server_list()
+                        for server in self.server_info_list:
+                            if server_name == server.name:
+                                server_list_item = self.server_list.findItems(
+                                    f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
+                                    QtCore.Qt.MatchExactly,
+                                )
+                                self.server_list.setCurrentItem(
+                                    server_list_item[0]
+                                )
+                                self.server_list.setFocus()
+                                self.connection_name = connection_name
+                                self.connected_server = server.name
+                                return False
+                except Exception as e:
+                    print(e)
 
         except subprocess.CalledProcessError:
             self.statusbar.showMessage(
-                "ERROR: Network Manager query error", 2000)
+                "ERROR: Network Manager query error", 2000
+            )
             self.repaint()
 
     def randomize_mac(self):
@@ -1009,24 +955,24 @@ class MainWindow(QtWidgets.QMainWindow):
             lines = output.stdout.decode("utf-8").split("\n")
 
             for line in lines:
-                if line:
-                    elements = line.strip().split(":")
-                    uuid = elements[1]
-                    connection_type = elements[0]
-                    if type != "vpn":
-                        subprocess.run(["nmcli", "connection", "down", uuid])
-                        subprocess.run(
-                            [
-                                "nmcli",
-                                "connection",
-                                "modify",
-                                "--temporary",
-                                uuid,
-                                connection_type + ".cloned-mac-address",
-                                "random",
-                            ]
-                        )
-                        subprocess.run(["nmcli", "connection", "up", uuid])
+                elements = line.strip().split(":")
+                uuid = elements[1]
+                connection_type = elements[0]
+                if type != "vpn":
+                    subprocess.run(["nmcli", "connection", "down", uuid])
+                    subprocess.run(
+                        [
+                            "nmcli",
+                            "connection",
+                            "modify",
+                            "--temporary",
+                            uuid,
+                            f'{connection_type}.cloned-mac-address',
+                            "random",
+                        ]
+                    )
+
+                    subprocess.run(["nmcli", "connection", "up", uuid])
 
             self.statusbar.showMessage("Random MAC Address assigned", 2000)
             self.write_conf()
@@ -1040,85 +986,106 @@ class MainWindow(QtWidgets.QMainWindow):
         Sudo dialog UI form
         TODO: Remove in favour of a DBUS based approach
         """
+
         sudo_dialog = QtWidgets.QDialog(self)
         sudo_dialog.setModal(True)
         sudo_dialog.resize(399, 206)
         icon = QtGui.QIcon.fromTheme("changes-prevent")
         sudo_dialog.setWindowIcon(icon)
-        sudo_dialog.gridLayout = QtWidgets.QGridLayout(sudo_dialog)
-        sudo_dialog.gridLayout.setObjectName("gridLayout")
-        sudo_dialog.verticalLayout = QtWidgets.QVBoxLayout()
-        sudo_dialog.verticalLayout.setContentsMargins(-1, 18, -1, -1)
-        sudo_dialog.verticalLayout.setSpacing(16)
-        sudo_dialog.verticalLayout.setObjectName("verticalLayout")
-        sudo_dialog.text_label = QtWidgets.QLabel(sudo_dialog)
-        sudo_dialog.text_label.setTextFormat(QtCore.Qt.RichText)
-        sudo_dialog.text_label.setAlignment(
+        sudo_dialog_grid_layout = QtWidgets.QGridLayout(sudo_dialog)
+        sudo_dialog_grid_layout.setObjectName("sudo_dialog_grid_layout")
+        sudo_dialog_vertical_layout = QtWidgets.QVBoxLayout()
+        sudo_dialog_vertical_layout.setContentsMargins(-1, 18, -1, -1)
+        sudo_dialog_vertical_layout.setSpacing(16)
+        sudo_dialog_vertical_layout.setObjectName(
+            "sudo_dialog_vertical_layout"
+        )
+        sudo_dialog_text_label = QtWidgets.QLabel(sudo_dialog)
+        sudo_dialog_text_label.setTextFormat(QtCore.Qt.RichText)
+        sudo_dialog_text_label.setAlignment(
             QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
         )
-        sudo_dialog.text_label.setWordWrap(True)
-        sudo_dialog.text_label.setObjectName("text_label")
-        sudo_dialog.verticalLayout.addWidget(sudo_dialog.text_label)
-        sudo_dialog.sudo_password = QtWidgets.QLineEdit(self)
-        sudo_dialog.sudo_password.setCursor(
-            QtGui.QCursor(QtCore.Qt.IBeamCursor))
-        sudo_dialog.sudo_password.setAlignment(QtCore.Qt.AlignCenter)
-        sudo_dialog.sudo_password.setClearButtonEnabled(False)
-        sudo_dialog.sudo_password.setObjectName("sudo_password")
-        sudo_dialog.sudo_password.setEchoMode(QtWidgets.QLineEdit.Password)
-        sudo_dialog.verticalLayout.addWidget(sudo_dialog.sudo_password)
-        sudo_dialog.gridLayout.addLayout(
-            sudo_dialog.verticalLayout, 0, 0, 1, 1)
-        sudo_dialog.horizontalLayout = QtWidgets.QHBoxLayout()
-        sudo_dialog.horizontalLayout.setSizeConstraint(
+        sudo_dialog_text_label.setWordWrap(True)
+        sudo_dialog_text_label.setObjectName("sudo_dialog_text_label")
+        sudo_dialog_vertical_layout.addWidget(sudo_dialog_text_label)
+        sudo_dialog_password = QtWidgets.QLineEdit(self)
+        sudo_dialog_password.setCursor(
+            QtGui.QCursor(QtCore.Qt.IBeamCursor)
+        )
+        sudo_dialog_password.setAlignment(QtCore.Qt.AlignCenter)
+        sudo_dialog_password.setClearButtonEnabled(False)
+        sudo_dialog_password.setObjectName("sudo_dialog_password")
+        sudo_dialog_password.setEchoMode(QtWidgets.QLineEdit.Password)
+        sudo_dialog_vertical_layout.addWidget(sudo_dialog_password)
+        sudo_dialog_grid_layout.addLayout(
+            sudo_dialog_vertical_layout, 0, 0, 1, 1
+        )
+        sudo_dialog_layout = QtWidgets.QHBoxLayout()
+        sudo_dialog_layout.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint
         )
-        sudo_dialog.horizontalLayout.setContentsMargins(-1, 0, -1, 6)
-        sudo_dialog.horizontalLayout.setSpacing(0)
-        sudo_dialog.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem = QtWidgets.QSpacerItem(
+        sudo_dialog_layout.setContentsMargins(-1, 0, -1, 6)
+        sudo_dialog_layout.setSpacing(0)
+        sudo_dialog_layout.setObjectName("sudo_dialog_layout")
+        spacer_item_5 = QtWidgets.QSpacerItem(
             178, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        sudo_dialog.horizontalLayout.addItem(spacerItem)
-        sudo_dialog.accept_box = QtWidgets.QDialogButtonBox(sudo_dialog)
-        sudo_dialog.accept_box.setOrientation(QtCore.Qt.Horizontal)
-        sudo_dialog.accept_box.addButton(
-            "Login", QtWidgets.QDialogButtonBox.AcceptRole)
-        sudo_dialog.accept_box.addButton(
+        sudo_dialog_layout.addItem(spacer_item_5)
+        sudo_dialog_accept_box = QtWidgets.QDialogButtonBox(sudo_dialog)
+        sudo_dialog_accept_box.setOrientation(QtCore.Qt.Horizontal)
+        sudo_dialog_accept_box.addButton(
+            "Login", QtWidgets.QDialogButtonBox.AcceptRole
+        )
+        sudo_dialog_accept_box.addButton(
             "Cancel", QtWidgets.QDialogButtonBox.RejectRole
         )
-        sudo_dialog.accept_box.setObjectName("accept_box")
-        sudo_dialog.horizontalLayout.addWidget(sudo_dialog.accept_box)
-        sudo_dialog.gridLayout.addLayout(
-            sudo_dialog.horizontalLayout, 1, 0, 1, 1)
-        sudo_dialog.setWindowTitle("Authentication Needed")
-        sudo_dialog.text_label.setText(
+        sudo_dialog_accept_box.setObjectName("sudo_dialog_accept_box")
+        sudo_dialog_layout.addWidget(sudo_dialog_accept_box)
+        sudo_dialog_grid_layout.addLayout(
+            sudo_dialog_layout, 1, 0, 1, 1
+        )
+        sudo_dialog.setWindowTitle("Authentication needed")
+        sudo_dialog_text_label.setText(
             '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the auto-connect script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
         )
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
         # move to center
         sudo_dialog.move(
-            int((resolution.width() / 2) - (sudo_dialog.frameSize().width() / 2)),
-            int((resolution.height() / 2) -
-                (sudo_dialog.frameSize().height() / 2)),
+            int(
+                (
+                    resolution.width() / 2
+                ) - (
+                    sudo_dialog.frameSize().width() / 2
+                )
+            ),
+            int(
+                (
+                    resolution.height() / 2
+                ) - (
+                    sudo_dialog.frameSize().height() / 2
+                )
+            ),
         )
         # button functionality here
-        sudo_dialog.accept_box.accepted.connect(self.check_sudo)
-        sudo_dialog.accept_box.rejected.connect(self.close_sudo_dialog)
+        sudo_dialog_accept_box.accepted.connect(self.check_sudo)
+        sudo_dialog_accept_box.rejected.connect(self.close_sudo_dialog)
         QtCore.QMetaObject.connectSlotsByName(sudo_dialog)
         return sudo_dialog
 
-    def close_sudo_dialog(self):  # added to clear sudo password when cancel is pressed
+    def close_sudo_dialog(self):
+        # Clear sudo password when cancel is pressed.
+
         self.sudo_password = None
         self.sudo_dialog.close()
 
     def check_sudo(self):
         """
-        Checks validity of sudo password
+        Check validity of sudo password.
 
         :return: True if valid False if invalid
         """
-        self.sudo_password = self.sudo_dialog.sudo_password.text()
+
+        self.sudo_password = self.sudo_dialog_password.text()
         try:
             p1 = subprocess.Popen(
                 ["echo", self.sudo_password],
@@ -1151,10 +1118,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_interfaces(self):
         """
-        Gets current Network interfaces
+        Get current network interfaces.
 
-        :return: List of Network interfaces
+        :return: List of network interfaces
         """
+
         try:
             output = subprocess.run(
                 [
@@ -1178,7 +1146,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 if line:
                     elements = line.strip().split(":")
 
-                    if (elements[0] == "wifi") or (elements[0] == "ethernet"):
+                    if elements[0] in ["wifi", "ethernet"]:
                         interfaces.append(elements[1])
 
             return interfaces
@@ -1188,11 +1156,11 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def set_auto_connect(self):
         """
-        Generates auto_connect bash script and moves it to the NetworkManager
+        Generate auto_connect bash script and move it to NetworkManager.
         """
+
         self.config.read(self.conf_path)
-        interfaces = self.get_interfaces()
-        if interfaces:
+        if interfaces := self.get_interfaces():
             interface_string = "|".join(interfaces)
             script = (
                 "#!/bin/bash\n\n"
@@ -1222,12 +1190,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     "sudo",
                     "-S",
                     "mv",
-                    self.scripts_path + "/auto_connect",
-                    self.network_manager_path + "auto_connect",
+                    f'{self.scripts_path}/auto_connect',
+                    f'{self.network_manager_path}auto_connect',
                 ],
                 stdin=p1.stdout,
                 stdout=subprocess.PIPE,
             )
+
             p1.stdout.close()
             p2.stdout.close()
             p3 = subprocess.Popen(
@@ -1242,11 +1211,12 @@ class MainWindow(QtWidgets.QMainWindow):
                     "-S",
                     "chown",
                     "root:root",
-                    self.network_manager_path + "auto_connect",
+                    f'{self.network_manager_path}auto_connect',
                 ],
                 stdin=p3.stdout,
                 stdout=subprocess.PIPE,
             )
+
             p3.stdout.close()
             p4.stdout.close()
             p5 = subprocess.Popen(
@@ -1261,11 +1231,12 @@ class MainWindow(QtWidgets.QMainWindow):
                     "-S",
                     "chmod",
                     "744",
-                    self.network_manager_path + "auto_connect",
+                    f'{self.network_manager_path}auto_connect',
                 ],
                 stdin=p5.stdout,
                 stdout=subprocess.PIPE,
             )
+
             p5.stdout.close()
             p6.stdout.close()
             self.config["SETTINGS"]["auto_connect"] = "True"
@@ -1286,7 +1257,7 @@ class MainWindow(QtWidgets.QMainWindow):
             and self.config.getboolean("SETTINGS", "auto_connect")
         ):
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to remove the auto-connect script from the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
@@ -1459,18 +1430,18 @@ class MainWindow(QtWidgets.QMainWindow):
         Called everytime the Killswitch button is pressed
         """
         if (
-            not self.killswitch_btn.isChecked()
+            not self.kill_switch_button.isChecked()
             and not self.sudo_password
             and self.config.getboolean("SETTINGS", "kill_switch")
         ):
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to remove the kill switch script from the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
 
             if not self.sudo_password:  # dialog was canceled
-                self.killswitch_btn.setChecked(False)
+                self.kill_switch_button.setChecked(False)
                 return False
             try:
                 p1 = subprocess.Popen(
@@ -1497,7 +1468,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.repaint()
 
         elif (
-            not self.killswitch_btn.isChecked()
+            not self.kill_switch_button.isChecked()
             and self.sudo_password
             and self.config.getboolean("SETTINGS", "kill_switch")
         ):
@@ -1527,26 +1498,26 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.repaint()
 
         elif (
-            self.killswitch_btn.isChecked()
+            self.kill_switch_button.isChecked()
             and self.get_active_vpn()
             and self.sudo_password
         ):
             self.set_kill_switch()
 
         elif (
-            self.killswitch_btn.isChecked()
+            self.kill_switch_button.isChecked()
             and self.get_active_vpn()
             and not self.sudo_password
         ):
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the kill switch script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
             if self.sudo_password:
                 self.set_kill_switch()
             else:
-                self.killswitch_btn.setChecked(False)
+                self.kill_switch_button.setChecked(False)
                 return False
 
     def disable_ipv6(self):
@@ -1584,7 +1555,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "ERROR: disabling IPV6 failed", 2000)
         else:
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to disable IPV6. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
@@ -1617,7 +1588,8 @@ class MainWindow(QtWidgets.QMainWindow):
                     p2.stdout.close()
                 except subprocess.CalledProcessError:
                     self.statusbar.showMessage(
-                        "ERROR: disabling IPV6 failed", 2000)
+                        "ERROR: disabling IPV6 failed", 2000
+                    )
 
     def enable_ipv6(self):
         """
@@ -1654,7 +1626,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     "ERROR: disabling IPV6 failed", 2000)
         else:
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to enable IPV6. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
@@ -1775,24 +1747,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusbar.clearMessage()
         self.repaint()
 
-        if self.killswitch_btn.isChecked() and not self.sudo_password:
+        if self.kill_switch_button.isChecked() and not self.sudo_password:
             self.sudo_dialog = self.get_sudo()
-            self.sudo_dialog.text_label.setText(
+            self.sudo_dialog_text_label.setText(
                 '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the kill switch script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
             )
             self.sudo_dialog.exec_()
             if not self.sudo_password:  # dialog was closed
-                self.killswitch_btn.setChecked(False)
+                self.kill_switch_button.setChecked(False)
                 return False
             self.set_kill_switch()
 
-        elif self.killswitch_btn.isChecked() and self.sudo_password:
+        elif self.kill_switch_button.isChecked() and self.sudo_password:
             self.set_kill_switch()
 
         # UI changes here
         if self.get_active_vpn():  # if connection successful
-            self.connect_btn.hide()
-            self.disconnect_btn.show()
+            self.connect_button.hide()
+            self.disconnect_button.show()
             self.retranslateUi()
 
     def disconnect_vpn(self):
@@ -1800,8 +1772,8 @@ class MainWindow(QtWidgets.QMainWindow):
         Step through all of the UI logic to disconnect the VPN.
         """
 
-        if self.killswitch_btn.isChecked():
-            self.killswitch_btn.setChecked(False)
+        if self.kill_switch_button.isChecked():
+            self.kill_switch_button.setChecked(False)
             self.statusbar.showMessage("Disabling Killswitch...", 5000)
             self.repaint()
             self.disable_kill_switch()
@@ -1819,8 +1791,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.repaint()
 
         # UI changes here
-        self.disconnect_btn.hide()
-        self.connect_btn.show()
+        self.disconnect_button.hide()
+        self.connect_button.show()
         self.retranslateUi()
 
     def center_on_screen(self):
@@ -1854,44 +1826,45 @@ class MainWindow(QtWidgets.QMainWindow):
             _translate("MainWindow", "Randomize MAC address")
         )
         self.mac_changer_box.setText(_translate("MainWindow", "Randomize MAC"))
-        self.killswitch_btn.setStatusTip(
+        self.kill_switch_button.setStatusTip(
             _translate(
                 "MainWindow", "Disables internet connection if VPN connectivity is lost"
             )
         )
-        self.killswitch_btn.setText(_translate("MainWindow", "Kill Switch"))
+        self.kill_switch_button.setText(
+            _translate("MainWindow", "Kill Switch"))
         self.server_type_select.setStatusTip(
             _translate("MainWindow", "Select Server Type")
         )
         self.connection_type_select.setStatusTip(
             _translate("MainWindow", "Select connection type")
         )
-        self.connect_btn.setText(_translate("MainWindow", "Connect"))
-        self.disconnect_btn.setText(_translate("MainWindow", "Disconnect"))
-        self.label.setText(_translate("MainWindow", "Servers"))
+        self.connect_button.setText(_translate("MainWindow", "Connect"))
+        self.disconnect_button.setText(_translate("MainWindow", "Disconnect"))
+        self.central_widget_label.setText(_translate("MainWindow", "Servers"))
 
     def retranslate_login_ui(self):
         _translate = QtCore.QCoreApplication.translate
-        self.nord_image.setText(
+        self.nordImageWidget.setText(
             _translate(
                 "MainWindow",
                 f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
             )
         )
-        self.user_label.setText(
+        self.usernameLabel.setText(
             _translate(
                 "MainWindow",
                 '<html><head/><body><p align="right">Email:     </p></body></html>',
             )
         )
-        self.password_label.setText(
+        self.passwordLabel.setText(
             _translate(
                 "MainWindow",
                 '<html><head/><body><p align="right">Password:     </p></body></html>',
             )
         )
-        self.login_btn.setText(_translate("MainWindow", "Login"))
-        self.remember_checkBox.setText(_translate("MainWindow", "Remember"))
+        self.loginButton.setText(_translate("MainWindow", "Login"))
+        self.rememberCheckbox.setText(_translate("MainWindow", "Remember"))
 
 
 def main():
