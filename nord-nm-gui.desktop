@@ -1,0 +1,15 @@
+# Install to ~/.local/share/applications
+# Dependencies:
+# network-manager-openvpn, network-manager-openvpn-gnome (debian)
+# NetworkManager-openvpn, NetworkManager-openvpn-gnome (fedora)
+# networkmanager-openvpn (arch)
+[Desktop Entry]
+Type=Application
+Version=0.0.1
+Name=nord-nm-gui
+Comment=Graphical NordVPN client
+# Path="$current_dir"/nord_vpn
+Exec=nordvpn-gui
+# Icon="$current_dir"/nord_vpn/nordvpnicon.ico
+Terminal=false
+Categories=Internet;System;Utilities;

@@ -3,9 +3,9 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "nord_nm_gui"
+name = "nord-nm-gui"
 version = "0.0.1"
-description = "Graphical frontend for NordVPN on Linux"
+description = "Graphical frontend for NordVPN / NetworkManager on Linux"
 authors = [
   "Vincent Foster-Mueller <https://github.com/vfosterm>",
   "Chris Cunningham <thumperward@hotmail.com>"
@@ -24,4 +24,4 @@ PyQt5 = "^5.15.6"
 autopep8 = "^1.6.0"
 
 [tool.poetry.scripts]
-nordvpn-gui = 'nord_nm_gui.__init__:main'
+nord-nm-gui = 'nord_nm_gui:main'
