@@ -497,9 +497,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if not os.path.isfile(self.conf_path):
                 self.config["USER"] = {"USER_NAME": "None"}
                 self.config["SETTINGS"] = {
-                    "MAC_RANDOMIZER": "False",
-                    "KILL_SWITCH": "False",
-                    "AUTO_CONNECT": "False",
+                    "MAC_RANDOMIZER": False,
+                    "KILL_SWITCH": False,
+                    "AUTO_CONNECT": False,
                 }
                 write_conf(self.conf_path, self.config)
 
@@ -886,7 +886,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo_grid_layout.addLayout(sudo_layout, 1, 0, 1, 1)
         sudo.setWindowTitle("Authentication needed")
         sudo_text_label.setText(
-            '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the auto-connect script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
+            '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated privileges.</p></body></html>'
         )
         # button functionality here
         sudo_accept_box.accepted.connect(self.check_sudo)
@@ -920,7 +920,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
             if "root" in output:
                 self.sudo.close()
-                print("True")
                 return True
             else:
                 error = QtWidgets.QErrorMessage(self.sudo)
@@ -977,23 +976,21 @@ class MainWindow(QtWidgets.QMainWindow):
             ], stdin=p5.stdout, stdout=subprocess.PIPE,)
             p5.stdout.close()
             p6.stdout.close()
-            self.config["SETTINGS"]["auto_connect"] = "True"
+            self.config["SETTINGS"]["auto_connect"] = True
             write_conf(self.conf_path, self.config)
         except Exception as e:
             print(e)
 
     def disable_auto_connect(self):
         """
-        Handles the enabling and disabling of auto-connect depending on UI state
+        Handle the enabling and disabling of auto-connect depending on UI state
         Called everytime the auto-connect box is clicked
         """
+
         self.config.read(self.conf_path)
 
         if not self.auto_connect_box.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
             self.sudo = self.get_sudo()
-            self.sudo_text_label.setText(
-                '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to remove the auto-connect script from the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-            )
             self.sudo.exec_()
             if not self.sudo_password:  # dialog was canceled
                 return False
@@ -1006,7 +1003,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 p1.stdout.close()
                 p2.stdout.close()
-                self.config["SETTINGS"]["auto_connect"] = "False"
+                self.config["SETTINGS"]["auto_connect"] = False
                 write_conf(self.conf_path, self.config)
             except Exception as e:
                 print(e)
@@ -1014,19 +1011,13 @@ class MainWindow(QtWidgets.QMainWindow):
         elif not self.auto_connect_box.isChecked() and self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
             try:
                 p1 = echo_sudo(self.sudo_password)
-                p2 = subprocess.Popen(
-                    [
-                        "sudo",
-                        "-S",
-                        "rm",
-                        f'{self.network_manager_path}auto_connect',
-                    ],
-                    stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-                )
-
+                p2 = subprocess.Popen([
+                    "sudo", "-S", "rm",
+                    f'{self.network_manager_path}auto_connect',
+                ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 p1.stdout.close()
                 p2.stdout.close()
-                self.config["SETTINGS"]["auto_connect"] = "False"
+                self.config["SETTINGS"]["auto_connect"] = False
                 write_conf(self.conf_path, self.config)
             except Exception as e:
                 print(e)
@@ -1069,19 +1060,11 @@ class MainWindow(QtWidgets.QMainWindow):
                 print(script, file=kill_switch)
 
             p1 = echo_sudo(self.sudo_password)
-            p2 = subprocess.Popen(
-                [
-                    "sudo",
-                    "-S",
-                    "mv",
-                    f'{self.scripts_path}/kill_switch',
-                    f'{self.network_manager_path}kill_switch',
-                ],
-                stdin=p1.stdout,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
-            )
-
+            p2 = subprocess.Popen([
+                "sudo", "-S", "mv",
+                f'{self.scripts_path}/kill_switch',
+                f'{self.network_manager_path}kill_switch',
+            ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p1.stdout.close()
             p2.stdout.close()
             time.sleep(0.5)
@@ -1099,7 +1082,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ], stdin=p5.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p5.stdout.close()
             p6.stdout.close()
-            self.config["SETTINGS"]["kill_switch"] = "True"
+            self.config["SETTINGS"]["kill_switch"] = True
             write_conf(self.conf_path, self.config)
             self.statusbar.showMessage("Kill switch activated", 2000)
             self.repaint()
@@ -1113,9 +1096,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if not self.kill_switch_button.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "kill_switch"):
             self.sudo = self.get_sudo()
-            self.sudo_text_label.setText(
-                '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to remove the kill switch script from the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-            )
             self.sudo.exec_()
 
             if not self.sudo_password:  # dialog was canceled
@@ -1132,7 +1112,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 p2.stdout.close()
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
-                self.config["SETTINGS"]["kill_switch"] = "False"
+                self.config["SETTINGS"]["kill_switch"] = False
                 write_conf(self.conf_path, self.config)
 
             except subprocess.CalledProcessError:
@@ -1147,27 +1127,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
             try:
                 p1 = echo_sudo(self.sudo_password)
-                p2 = subprocess.Popen(
-                    [
-                        "sudo",
-                        "-S",
-                        "rm",
-                        f'{self.network_manager_path}kill_switch',
-                    ],
-                    stdin=p1.stdout,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-
+                p2 = subprocess.Popen([
+                    "sudo", "-S", "rm",
+                    f'{self.network_manager_path}kill_switch',
+                ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 p1.stdout.close()
                 p2.stdout.close()
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
-                self.config["SETTINGS"]["kill_switch"] = "False"
+                self.config["SETTINGS"]["kill_switch"] = False
                 write_conf(self.conf_path, self.config)
 
             except subprocess.CalledProcessError:
-                print("ERROR disabling kill switch", 2000)
+                print("ERROR disabling kill switch")
                 self.repaint()
 
         elif self.kill_switch_button.isChecked() and self.get_active_vpn() and self.sudo_password:
@@ -1175,9 +1147,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         elif self.kill_switch_button.isChecked() and self.get_active_vpn() and not self.sudo_password:
             self.sudo = self.get_sudo()
-            self.sudo_text_label.setText(
-                '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the kill switch script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-            )
             self.sudo.exec_()
             if self.sudo_password:
                 self.set_kill_switch()
@@ -1191,9 +1160,6 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         if not self.sudo_password:
             self.sudo = self.get_sudo()
-            self.sudo_text_label.setText(
-                '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to disable IPV6. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-            )
             self.sudo.exec_()
 
         try:
@@ -1215,9 +1181,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if not self.sudo_password:
             self.sudo = self.get_sudo()
-            self.sudo_text_label.setText(
-                '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to enable IPV6. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-            )
             self.sudo.exec_()
 
         try:
@@ -1232,14 +1195,6 @@ class MainWindow(QtWidgets.QMainWindow):
         except subprocess.CalledProcessError:
             print("ERROR: Enabling IPV6 failed", 2000)
 
-    def check_connection_validity(self):
-        """
-        Checks if connection is a double_vpn and forces the connection to TCP
-        """
-        if self.server_type_select.currentText() == "Double VPN":
-            # perhaps add pop up to give user the choice
-            self.connection_type_select.setCurrentIndex(1)  # set to TCP
-
     def connect(self):
         """
         Step through all of the UI Logic for connecting to the VPN.
@@ -1247,9 +1202,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.mac_changer_box.isChecked():
             self.randomize_mac()
-            self.config["SETTINGS"]["mac_randomizer"] = "True"
+            self.config["SETTINGS"]["mac_randomizer"] = True
         else:
-            self.config["SETTINGS"]["mac_randomizer"] = "False"
+            self.config["SETTINGS"]["mac_randomizer"] = False
         write_conf(self.conf_path, self.config)
         if self.auto_connect_box.isChecked():
             if not self.sudo_password:  # prompt for sudo password
@@ -1263,7 +1218,9 @@ class MainWindow(QtWidgets.QMainWindow):
                     return False
             else:
                 self.set_auto_connect()
-        self.check_connection_validity()
+        if self.server_type_select.currentText() == "Double VPN":
+            # set to TCP; perhaps add pop up to give user the choice?
+            self.connection_type_select.setCurrentIndex(1)
         self.disable_ipv6()
         self.get_ovpn()
         self.import_ovpn()
@@ -1275,9 +1232,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.kill_switch_button.isChecked():
             if not self.sudo_password:
                 self.sudo = self.get_sudo()
-                self.sudo_text_label.setText(
-                    '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions in order to move the kill switch script to the Network Manager directory. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated priveledges.</p></body></html>'
-                )
                 self.sudo.exec_()
             if not self.sudo_password:  # dialog was closed
                 self.kill_switch_button.setChecked(False)
@@ -1300,8 +1254,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.statusbar.showMessage("Disabling Killswitch...", 5000)
             self.repaint()
             self.disable_kill_switch()
-            # sleep time to mitigate NetworkManager still killing connection
-            time.sleep(5)
+            time.sleep(5)  # sleep while NetworkManager is killing connection
+
         if self.auto_connect_box.isChecked():
             self.auto_connect_box.setChecked(False)
             self.statusbar.showMessage("Disabling auto-connect...", 1000)
@@ -1318,64 +1272,51 @@ class MainWindow(QtWidgets.QMainWindow):
         self.retranslateUi()
 
     def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", " "))
-        self.title_label.setText(
-            _translate(
-                "MainWindow",
-                f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nord-logo.png"/></p></body></html>',
-            )
-        )
-        self.country_list_label.setText(_translate("MainWindow", "Countries"))
-        self.auto_connect_box.setStatusTip(
-            _translate(
-                "MainWindow", "Network Manager will auto-connect on system start"
-            )
-        )
-        self.auto_connect_box.setText(_translate("MainWindow", "Auto connect"))
-        self.mac_changer_box.setStatusTip(
-            _translate("MainWindow", "Randomize MAC address")
-        )
-        self.mac_changer_box.setText(_translate("MainWindow", "Randomize MAC"))
-        self.kill_switch_button.setStatusTip(
-            _translate(
-                "MainWindow", "Disables internet connection if VPN connectivity is lost"
-            )
-        )
-        self.kill_switch_button.setText(
-            _translate("MainWindow", "Kill Switch"))
-        self.server_type_select.setStatusTip(
-            _translate("MainWindow", "Select Server Type")
-        )
-        self.connection_type_select.setStatusTip(
-            _translate("MainWindow", "Select connection type")
-        )
-        self.connect_button.setText(_translate("MainWindow", "Connect"))
-        self.disconnect_button.setText(_translate("MainWindow", "Disconnect"))
-        self.central_widget_label.setText(_translate("MainWindow", "Servers"))
+        _tr = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_tr("MainWindow", " "))
+        self.title_label.setText(_tr(
+            "MainWindow",
+            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nord-logo.png"/></p></body></html>',
+        ))
+        self.country_list_label.setText(_tr("MainWindow", "Countries"))
+        self.auto_connect_box.setStatusTip(_tr(
+            "MainWindow", "Network Manager will auto-connect on system start"
+        ))
+        self.auto_connect_box.setText(_tr("MainWindow", "Auto connect"))
+        self.mac_changer_box.setStatusTip(_tr(
+            "MainWindow", "Randomize MAC address"
+        ))
+        self.mac_changer_box.setText(_tr("MainWindow", "Randomize MAC"))
+        self.kill_switch_button.setStatusTip(_tr(
+            "MainWindow", "Disables internet connection if VPN connectivity is lost"
+        ))
+        self.kill_switch_button.setText(_tr("MainWindow", "Kill Switch"))
+        self.server_type_select.setStatusTip(_tr(
+            "MainWindow", "Select Server Type"
+        ))
+        self.connection_type_select.setStatusTip(_tr(
+            "MainWindow", "Select connection type"
+        ))
+        self.connect_button.setText(_tr("MainWindow", "Connect"))
+        self.disconnect_button.setText(_tr("MainWindow", "Disconnect"))
+        self.central_widget_label.setText(_tr("MainWindow", "Servers"))
 
     def retranslate_login_ui(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.nordImageWidget.setText(
-            _translate(
-                "MainWindow",
-                f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
-            )
-        )
-        self.usernameLabel.setText(
-            _translate(
-                "MainWindow",
-                '<html><head/><body><p align="right">Email:     </p></body></html>',
-            )
-        )
-        self.passwordLabel.setText(
-            _translate(
-                "MainWindow",
-                '<html><head/><body><p align="right">Password:     </p></body></html>',
-            )
-        )
-        self.loginButton.setText(_translate("MainWindow", "Login"))
-        self.rememberCheckbox.setText(_translate("MainWindow", "Remember"))
+        _tr = QtCore.QCoreApplication.translate
+        self.nordImageWidget.setText(_tr(
+            "MainWindow",
+            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
+        ))
+        self.usernameLabel.setText(_tr(
+            "MainWindow",
+            '<html><head/><body><p align="right">Email:     </p></body></html>',
+        ))
+        self.passwordLabel.setText(_tr(
+            "MainWindow",
+            '<html><head/><body><p align="right">Password:     </p></body></html>',
+        ))
+        self.loginButton.setText(_tr("MainWindow", "Login"))
+        self.rememberCheckbox.setText(_tr("MainWindow", "Remember"))
 
 
 def main():
