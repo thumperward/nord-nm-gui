@@ -268,25 +268,24 @@ class MainWindow(QtWidgets.QMainWindow):
         horizontal_layout_1.addWidget(self.connect_button)
 
         # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
-
-        self.disconnect_button = QtWidgets.QPushButton(central_widget_)
-        self.disconnect_button.hide()
-        size_policy_7 = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
-        size_policy_7.setHorizontalStretch(0)
-        size_policy_7.setVerticalStretch(0)
-        size_policy_7.setHeightForWidth(
-            self.disconnect_button.sizePolicy().hasHeightForWidth()
-        )
-        self.disconnect_button.setSizePolicy(size_policy_7)
-        self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.disconnect_button.setObjectName("disconnect_button")
-        horizontal_layout_1.addWidget(self.disconnect_button)
-
-        # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
         grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+
+        # self.disconnect_button = QtWidgets.QPushButton(central_widget_)
+        # self.disconnect_button.hide()
+        # size_policy_7 = QtWidgets.QSizePolicy(
+        #     QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        # )
+        # size_policy_7.setHorizontalStretch(0)
+        # size_policy_7.setVerticalStretch(0)
+        # size_policy_7.setHeightForWidth(
+        #     self.disconnect_button.sizePolicy().hasHeightForWidth()
+        # )
+        # self.disconnect_button.setSizePolicy(size_policy_7)
+        # self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
+        # self.disconnect_button.setObjectName("disconnect_button")
+        # horizontal_layout_1.addWidget(self.disconnect_button)
+        # # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
+        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
 
         vertical_layout_4 = QtWidgets.QVBoxLayout()
         vertical_layout_4.setObjectName("vertical_layout_4")
