@@ -173,7 +173,7 @@ class MainWindow(QtWidgets.QMainWindow):
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
         horizontal_layout_2.addItem(spacer_item_2)
-        grid_layout_1.addLayout(horizontal_layout_2, 0, 0, 1, 2)
+        grid_layout_1.addLayout(horizontal_layout_2)
 
         vertical_layout_3 = QtWidgets.QVBoxLayout()
         vertical_layout_3.setObjectName("vertical_layout_3")
@@ -202,7 +202,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.country_list.setObjectName("country_list")
         vertical_layout_3.addWidget(self.country_list)
 
-        grid_layout_1.addLayout(vertical_layout_3, 1, 0, 1, 1)
+        grid_layout_1.addLayout(vertical_layout_3)
         horizontal_layout_1 = QtWidgets.QHBoxLayout()
         horizontal_layout_1.setObjectName("horizontal_layout_1")
         vertical_layout_1 = QtWidgets.QVBoxLayout()
@@ -268,7 +268,7 @@ class MainWindow(QtWidgets.QMainWindow):
         horizontal_layout_1.addWidget(self.connect_button)
 
         # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+        # grid_layout_1.addLayout(horizontal_layout_1)
 
         self.disconnect_button = QtWidgets.QPushButton(central_widget_)
         self.disconnect_button.hide()
@@ -286,7 +286,7 @@ class MainWindow(QtWidgets.QMainWindow):
         horizontal_layout_1.addWidget(self.disconnect_button)
 
         # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+        grid_layout_1.addLayout(horizontal_layout_1)
 
         vertical_layout_4 = QtWidgets.QVBoxLayout()
         vertical_layout_4.setObjectName("vertical_layout_4")
@@ -311,7 +311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.server_list = QtWidgets.QListWidget(central_widget_)
         self.server_list.setObjectName("server_list")
         vertical_layout_4.addWidget(self.server_list)
-        grid_layout_1.addLayout(vertical_layout_4, 1, 1, 1, 1)
+        grid_layout_1.addLayout(vertical_layout_4)
         self.title_label.raise_()
         self.server_list.raise_()
         self.country_list.raise_()
@@ -388,18 +388,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.nordImageWidget.setObjectName("nordImageWidget")
         vertical_layout_5.addWidget(self.nordImageWidget)
 
-        vertical_layout_1 = QtWidgets.QVBoxLayout()
-        vertical_layout_1.setSizeConstraint(
+        vertical_layout_7 = QtWidgets.QVBoxLayout()
+        vertical_layout_7.setSizeConstraint(
             QtWidgets.QLayout.SetDefaultConstraint
         )
-        vertical_layout_1.setContentsMargins(-1, 0, -1, -1)
-        vertical_layout_1.setSpacing(6)
-        vertical_layout_1.setObjectName("vertical_layout_1")
-        horizontal_layout_1 = QtWidgets.QHBoxLayout()
-        horizontal_layout_1.setObjectName("horizontal_layout_1")
+        vertical_layout_7.setContentsMargins(-1, 0, -1, -1)
+        vertical_layout_7.setSpacing(6)
+        vertical_layout_7.setObjectName("vertical_layout_7")
+        horizontal_layout_4 = QtWidgets.QHBoxLayout()
+        horizontal_layout_4.setObjectName("horizontal_layout_4")
         self.usernameLabel = QtWidgets.QLabel(central_widget_)
         self.usernameLabel.setObjectName("usernameLabel")
-        horizontal_layout_1.addWidget(self.usernameLabel)
+        horizontal_layout_4.addWidget(self.usernameLabel)
         self.user_input = QtWidgets.QLineEdit(central_widget_)
         size_policy_10 = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -415,8 +415,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
         self.user_input.setAlignment(QtCore.Qt.AlignCenter)
         self.user_input.setObjectName("user_input")
-        horizontal_layout_1.addWidget(self.user_input)
-        vertical_layout_1.addLayout(horizontal_layout_1)
+        horizontal_layout_4.addWidget(self.user_input)
+        vertical_layout_7.addLayout(horizontal_layout_4)
 
         horizontal_layout_2 = QtWidgets.QHBoxLayout()
         horizontal_layout_2.setObjectName("horizontal_layout_2")
@@ -439,11 +439,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.password_input.setAlignment(QtCore.Qt.AlignCenter)
         self.password_input.setObjectName("password_input")
         horizontal_layout_2.addWidget(self.password_input)
-        vertical_layout_1.addLayout(horizontal_layout_2)
+        vertical_layout_7.addLayout(horizontal_layout_2)
 
         horizontal_layout_3 = QtWidgets.QHBoxLayout()
         horizontal_layout_3.setObjectName("horizontal_layout_3")
-        horizontal_layout_3.addLayout(vertical_layout_1)
+        horizontal_layout_3.addLayout(vertical_layout_7)
         horizontal_layout_3.addItem(QtWidgets.QSpacerItem(
             57, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
         ))
@@ -467,7 +467,7 @@ class MainWindow(QtWidgets.QMainWindow):
         vertical_layout_6.addWidget(self.rememberCheckbox)
         horizontal_layout_3.addLayout(vertical_layout_6)
         vertical_layout_5.addLayout(horizontal_layout_3)
-        grid_layout_2.addLayout(vertical_layout_5, 0, 0, 1, 1)
+        grid_layout_2.addLayout(vertical_layout_5)
         self.setCentralWidget(central_widget_)
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
@@ -864,7 +864,7 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo_password.setObjectName("sudo_password")
         sudo_password.setEchoMode(QtWidgets.QLineEdit.Password)
         sudo_vertical_layout.addWidget(sudo_password)
-        sudo_grid_layout.addLayout(sudo_vertical_layout, 0, 0, 1, 1)
+        sudo_grid_layout.addLayout(sudo_vertical_layout)
         sudo_layout = QtWidgets.QHBoxLayout()
         sudo_layout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         sudo_layout.setContentsMargins(-1, 0, -1, 6)
@@ -883,7 +883,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
         sudo_accept_box.setObjectName("sudo_accept_box")
         sudo_layout.addWidget(sudo_accept_box)
-        sudo_grid_layout.addLayout(sudo_layout, 1, 0, 1, 1)
+        sudo_grid_layout.addLayout(sudo_layout)
         sudo.setWindowTitle("Authentication needed")
         sudo_text_label.setText(
             '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated privileges.</p></body></html>'
