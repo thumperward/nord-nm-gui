@@ -110,42 +110,48 @@ def get_interfaces():
         print("ERROR Fetching interfaces")
 
 
-def remove_connection(connection_name):
+def remove_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run([
-            "nmcli", "connection", "delete", connection_name
-        ])
+        connection = subprocess.run(
+            ["nmcli", "connection", "delete", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Failed to remove Connection")
 
 
-def disable_connection(connection_name):
+def disable_connection(connection_name, sudo_password):
     try:
         connection = subprocess.run(
-            ["nmcli", "connection", "down", connection_name]
+            ["nmcli", "connection", "down", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
         )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Disconnection Failed", 2000)
 
 
-def enable_connection(connection_name):
+def enable_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run([
-            "nmcli", "connection", "up", connection_name
-        ])
+        connection = subprocess.run(
+            ["nmcli", "connection", "up", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Connection Failed", 2000)
 
 
-def nm_mod(connection_name, config_option, config_value):
+def nm_mod(connection_name, config_option, config_value, sudo_password):
     try:
-        process = subprocess.run([
-            "nmcli", "connection", "modify",
-            connection_name, config_option, config_value,
-        ])
+        process = subprocess.run(
+            [
+                "nmcli", "connection", "modify",
+                connection_name, config_option, config_value,
+            ],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         process.check_returncode()
         return process
     except subprocess.CalledProcessError:
@@ -166,15 +172,15 @@ def write_conf(conf_path, config):
     configfile.close()
 
 
-def add_secrets(connection_name, username, password):
+def add_secrets(connection_name, username, password, sudo_password):
     """
     Add the username and password to the NetworkManager configuration.
     """
 
-    nm_mod(connection_name, "+vpn.data", "password-flags=0")
+    nm_mod(connection_name, "+vpn.data", "password-flags=0", sudo_password)
     nm_mod(
-        connection_name, "+vpn.secrets", f'password={password}'
+        connection_name, "+vpn.secrets", f'password={password}', sudo_password
     )
-    nm_mod(connection_name, "+vpn.data", f'username={username}')
-    nm_mod(connection_name, "+ipv6.method", "ignore")
-    nm_mod(connection_name, "+vpn.data", "password-flags=0")
+    nm_mod(connection_name, "+vpn.data", f'username={username}', sudo_password)
+    nm_mod(connection_name, "+ipv6.method", "ignore", sudo_password)
+    nm_mod(connection_name, "+vpn.data", "password-flags=0", sudo_password)

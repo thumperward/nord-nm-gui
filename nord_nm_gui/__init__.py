@@ -1121,8 +1121,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.disable_ipv6()
         self.get_ovpn()
         self.import_ovpn()
-        add_secrets(self.connection_name, self.username, self.password)
-        enable_connection(self.connection_name)
+        if not self.sudo_password:
+            self.sudo = self.get_sudo()
+            self.sudo.exec_()
+        add_secrets(
+            self.connection_name, self.username, self.password, self.sudo_password
+        )
+        enable_connection(self.connection_name, self.sudo_password)
         self.statusbar.clearMessage()
         self.repaint()
 
@@ -1159,8 +1164,11 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.connection_name is None:
             print("no connection")
         else:
-            disable_connection(self.connection_name)
-            remove_connection(self.connection_name)
+            if not self.sudo_password:
+                self.sudo = self.get_sudo()
+                self.sudo.exec_()
+            disable_connection(self.connection_name, self.sudo_password)
+            remove_connection(self.connection_name, self.sudo_password)
         self.enable_ipv6()
         self.statusbar.clearMessage()
         self.repaint()
