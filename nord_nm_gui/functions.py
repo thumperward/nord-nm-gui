@@ -111,9 +111,6 @@ def get_interfaces():
 
 
 def remove_connection(connection_name):
-    """
-    Remove connection from network manager
-    """
     try:
         connection = subprocess.run([
             "nmcli", "connection", "delete", connection_name
@@ -124,9 +121,6 @@ def remove_connection(connection_name):
 
 
 def disable_connection(connection_name):
-    """
-    Disconnect vpn connection in NetworkManager
-    """
     try:
         connection = subprocess.run(
             ["nmcli", "connection", "down", connection_name]
@@ -137,9 +131,6 @@ def disable_connection(connection_name):
 
 
 def enable_connection(connection_name):
-    """
-    Enable vpn connection in NetworkManager
-    """
     try:
         connection = subprocess.run([
             "nmcli", "connection", "up", connection_name
@@ -147,13 +138,6 @@ def enable_connection(connection_name):
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Connection Failed", 2000)
-
-
-def echo_sudo(sudo_password):
-    return subprocess.Popen(
-        ["echo", sudo_password],
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
 
 
 def nm_mod(connection_name, config_option, config_value):
@@ -166,6 +150,13 @@ def nm_mod(connection_name, config_option, config_value):
         return process
     except subprocess.CalledProcessError:
         print("ERROR: nmcli command failed", 2000)
+
+
+def echo_sudo(sudo_password):
+    return subprocess.Popen(
+        ["echo", sudo_password],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
 
 
 def write_conf(conf_path, config):

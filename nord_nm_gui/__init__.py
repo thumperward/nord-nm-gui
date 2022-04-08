@@ -668,10 +668,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                     self.connected_server = server.name
                                     return True
                         else:
-                            self.connect_button.hide()
-                            self.disconnect_button.show()
-                            print("Fetching active server...")
-                            self.repaint()
+                            # self.connect_button.hide()
+                            # self.disconnect_button.show()
+                            # print("Fetching active server...")
+                            # self.repaint()
                             item = self.country_list.findItems(
                                 country, QtCore.Qt.MatchExactly
                             )
@@ -1135,8 +1135,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
             self.set_kill_switch()
 
-        # UI changes here
-        if self.get_active_vpn():  # if connection successful
+        if self.get_active_vpn():
             self.connect_button.hide()
             self.disconnect_button.show()
             self.retranslateUi()
