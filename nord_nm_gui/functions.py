@@ -150,7 +150,7 @@ def enable_connection(connection_name):
 
 
 def echo_sudo(sudo_password):
-    subprocess.Popen(
+    return subprocess.Popen(
         ["echo", sudo_password],
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )

@@ -241,9 +241,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.connect_button.setObjectName("connect_button")
         horizontal_layout_1.addWidget(self.connect_button)
 
-        # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
-
         self.disconnect_button = QtWidgets.QPushButton(central_widget_)
         self.disconnect_button.hide()
         size_policy_7 = QtWidgets.QSizePolicy(
@@ -655,6 +652,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 "connection", "show", "--active",
             ], stdout=subprocess.PIPE)
             output.check_returncode()
+            # TODO: this shows non-VPN connections, which is why the UI is bad
+            # TYPE hopefully shows 'vpn' for VPNs, needs checked
             for line in output.stdout.decode("utf-8").strip().split("\n"):
                 try:
                     elements = line.strip().split(":")
@@ -822,6 +821,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.sudo_password = self.sudo.sudo_password.text()
         try:
+            print("checking sudo")
             p1 = echo_sudo(self.sudo_password)
             p2 = subprocess.Popen(
                 ["sudo", "-S", "whoami"],
