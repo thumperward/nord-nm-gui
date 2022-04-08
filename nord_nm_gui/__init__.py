@@ -242,7 +242,7 @@ class MainWindow(QtWidgets.QMainWindow):
         horizontal_layout_1.addWidget(self.connect_button)
 
         # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
 
         self.disconnect_button = QtWidgets.QPushButton(central_widget_)
         self.disconnect_button.hide()
@@ -470,9 +470,9 @@ class MainWindow(QtWidgets.QMainWindow):
             if not os.path.isfile(self.conf_path):
                 self.config["USER"] = {"USER_NAME": "None"}
                 self.config["SETTINGS"] = {
-                    "MAC_RANDOMIZER": False,
-                    "KILL_SWITCH": False,
-                    "AUTO_CONNECT": False,
+                    "MAC_RANDOMIZER": "false",
+                    "KILL_SWITCH": "false",
+                    "AUTO_CONNECT": "false",
                 }
                 write_conf(self.conf_path, self.config)
 
@@ -655,10 +655,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "connection", "show", "--active",
             ], stdout=subprocess.PIPE)
             output.check_returncode()
-            # get this output and then debug
-            print(output.stdout.decode("utf-8"))
-
-            for line in output.stdout.decode("utf-8").split("\n"):
+            for line in output.stdout.decode("utf-8").strip().split("\n"):
                 try:
                     elements = line.strip().split(":")
                     connection_name = elements[1]
@@ -667,39 +664,42 @@ class MainWindow(QtWidgets.QMainWindow):
                     server_name, server_type = get_connection_info(
                         connection_info
                     )
-
                     if self.server_info_list:  # vpn connected successfully
                         for server in self.server_info_list:
                             if server_name == server.name:
                                 self.connected_server = server.name
                                 return True
                     else:
-                        self.connect_button.hide()
-                        self.disconnect_button.show()
-                        self.statusbar.showMessage(
-                            "Fetching Active Server...", 2000
-                        )
+                        # these are reversed
+                        # self.connect_button.hide()
+                        # self.disconnect_button.show()
+                        self.connect_button.show()
+                        self.disconnect_button.hide()
+                        # end reversal fix
+                        print("Fetching active server...")
                         self.repaint()
                         item = self.country_list.findItems(
                             country, QtCore.Qt.MatchExactly
                         )
-                        self.country_list.setCurrentItem(item[0])
-                        self.server_type_select.setCurrentIndex(server_type)
+                        if item:
+                            self.country_list.setCurrentItem(item[0])
+                            self.server_type_select.setCurrentIndex(
+                                server_type)
 
-                        self.get_server_list()
-                        for server in self.server_info_list:
-                            if server_name == server.name:
-                                server_list_item = self.server_list.findItems(
-                                    f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
-                                    QtCore.Qt.MatchExactly,
-                                )
-                                self.server_list.setCurrentItem(
-                                    server_list_item[0]
-                                )
-                                self.server_list.setFocus()
-                                self.connection_name = connection_name
-                                self.connected_server = server.name
-                                return False
+                            self.get_server_list()
+                            for server in self.server_info_list:
+                                if server_name == server.name:
+                                    server_list_item = self.server_list.findItems(
+                                        f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
+                                        QtCore.Qt.MatchExactly,
+                                    )
+                                    self.server_list.setCurrentItem(
+                                        server_list_item[0]
+                                    )
+                                    self.server_list.setFocus()
+                                    self.connection_name = connection_name
+                                    self.connected_server = server.name
+                                    return False
                 except Exception as e:
                     print(e)
 
@@ -756,54 +756,55 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo.resize(399, 206)
         icon = QtGui.QIcon.fromTheme("changes-prevent")
         sudo.setWindowIcon(icon)
-        sudo_grid_layout = QtWidgets.QGridLayout(sudo)
-        sudo_grid_layout.setObjectName("sudo_grid_layout")
-        sudo_vertical_layout = QtWidgets.QVBoxLayout()
-        sudo_vertical_layout.setContentsMargins(-1, 18, -1, -1)
-        sudo_vertical_layout.setSpacing(16)
-        sudo_vertical_layout.setObjectName("sudo_vertical_layout")
-        sudo_text_label = QtWidgets.QLabel(sudo)
-        sudo_text_label.setTextFormat(QtCore.Qt.RichText)
-        sudo_text_label.setAlignment(
+        sudo.sudo_grid_layout = QtWidgets.QGridLayout(sudo)
+        sudo.sudo_grid_layout.setObjectName("sudo_grid_layout")
+        sudo.sudo_vertical_layout = QtWidgets.QVBoxLayout()
+        sudo.sudo_vertical_layout.setContentsMargins(-1, 18, -1, -1)
+        sudo.sudo_vertical_layout.setSpacing(16)
+        sudo.sudo_vertical_layout.setObjectName("sudo_vertical_layout")
+        sudo.sudo_text_label = QtWidgets.QLabel(sudo)
+        sudo.sudo_text_label.setTextFormat(QtCore.Qt.RichText)
+        sudo.sudo_text_label.setAlignment(
             QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter
         )
-        sudo_text_label.setWordWrap(True)
-        sudo_text_label.setObjectName("sudo_text_label")
-        sudo_vertical_layout.addWidget(sudo_text_label)
-        sudo_password = QtWidgets.QLineEdit(self)
-        sudo_password.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
-        sudo_password.setAlignment(QtCore.Qt.AlignCenter)
-        sudo_password.setClearButtonEnabled(False)
-        sudo_password.setObjectName("sudo_password")
-        sudo_password.setEchoMode(QtWidgets.QLineEdit.Password)
-        sudo_vertical_layout.addWidget(sudo_password)
-        sudo_grid_layout.addLayout(sudo_vertical_layout, 0, 0, 1, 1)
-        sudo_layout = QtWidgets.QHBoxLayout()
-        sudo_layout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        sudo_layout.setContentsMargins(-1, 0, -1, 6)
-        sudo_layout.setSpacing(0)
-        sudo_layout.setObjectName("sudo_layout")
-        sudo_layout.addItem(QtWidgets.QSpacerItem(
+        sudo.sudo_text_label.setWordWrap(True)
+        sudo.sudo_text_label.setObjectName("sudo_text_label")
+        sudo.sudo_vertical_layout.addWidget(sudo.sudo_text_label)
+        sudo.sudo_password = QtWidgets.QLineEdit(self)
+        sudo.sudo_password.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        sudo.sudo_password.setAlignment(QtCore.Qt.AlignCenter)
+        sudo.sudo_password.setClearButtonEnabled(False)
+        sudo.sudo_password.setObjectName("sudo_password")
+        sudo.sudo_password.setEchoMode(QtWidgets.QLineEdit.Password)
+        sudo.sudo_vertical_layout.addWidget(sudo.sudo_password)
+        sudo.sudo_grid_layout.addLayout(sudo.sudo_vertical_layout, 0, 0, 1, 1)
+        sudo.sudo_layout = QtWidgets.QHBoxLayout()
+        sudo.sudo_layout.setSizeConstraint(
+            QtWidgets.QLayout.SetDefaultConstraint)
+        sudo.sudo_layout.setContentsMargins(-1, 0, -1, 6)
+        sudo.sudo_layout.setSpacing(0)
+        sudo.sudo_layout.setObjectName("sudo_layout")
+        sudo.sudo_layout.addItem(QtWidgets.QSpacerItem(
             178, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         ))
-        sudo_accept_box = QtWidgets.QDialogButtonBox(sudo)
-        sudo_accept_box.setOrientation(QtCore.Qt.Horizontal)
-        sudo_accept_box.addButton(
+        sudo.sudo_accept_box = QtWidgets.QDialogButtonBox(sudo)
+        sudo.sudo_accept_box.setOrientation(QtCore.Qt.Horizontal)
+        sudo.sudo_accept_box.addButton(
             "Login", QtWidgets.QDialogButtonBox.AcceptRole
         )
-        sudo_accept_box.addButton(
+        sudo.sudo_accept_box.addButton(
             "Cancel", QtWidgets.QDialogButtonBox.RejectRole
         )
-        sudo_accept_box.setObjectName("sudo_accept_box")
-        sudo_layout.addWidget(sudo_accept_box)
-        sudo_grid_layout.addLayout(sudo_layout, 1, 0, 1, 1)
+        sudo.sudo_accept_box.setObjectName("sudo_accept_box")
+        sudo.sudo_layout.addWidget(sudo.sudo_accept_box)
+        sudo.sudo_grid_layout.addLayout(sudo.sudo_layout, 1, 0, 1, 1)
         sudo.setWindowTitle("Authentication needed")
-        sudo_text_label.setText(
+        sudo.sudo_text_label.setText(
             '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated privileges.</p></body></html>'
         )
         # button functionality here
-        sudo_accept_box.accepted.connect(self.check_sudo)
-        sudo_accept_box.rejected.connect(self.close_sudo)
+        sudo.sudo_accept_box.accepted.connect(self.check_sudo)
+        sudo.sudo_accept_box.rejected.connect(self.close_sudo)
         QtCore.QMetaObject.connectSlotsByName(sudo)
         return sudo
 
@@ -819,7 +820,7 @@ class MainWindow(QtWidgets.QMainWindow):
         :return: True if valid False if invalid
         """
 
-        self.sudo_password = self.sudo_password.text()
+        self.sudo_password = self.sudo.sudo_password.text()
         try:
             p1 = echo_sudo(self.sudo_password)
             p2 = subprocess.Popen(
@@ -1105,9 +1106,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         if self.mac_changer_box.isChecked():
             self.randomize_mac()
-            self.config["SETTINGS"]["mac_randomizer"] = True
+            self.config["SETTINGS"]["mac_randomizer"] = "true"
         else:
-            self.config["SETTINGS"]["mac_randomizer"] = False
+            self.config["SETTINGS"]["mac_randomizer"] = "false"
         write_conf(self.conf_path, self.config)
         if self.auto_connect_box.isChecked():
             if not self.sudo_password:  # prompt for sudo password
@@ -1128,7 +1129,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.get_ovpn()
         self.import_ovpn()
         self.add_secrets(self.connection_name, self.username, self.password)
-        self.enable_connection(self.connection_name)
+        enable_connection(self.connection_name)
         self.statusbar.clearMessage()
         self.repaint()
 
@@ -1163,8 +1164,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.auto_connect_box.setChecked(False)
             self.statusbar.showMessage("Disabling auto-connect...", 1000)
             self.disable_auto_connect()
-        self.disable_connection(self.connection_name)
-        self.remove_connection(self.connection_name)
+        if self.connection_name is None:
+            print("no connection")
+        else:
+            disable_connection(self.connection_name)
+            remove_connection(self.connection_name)
         self.enable_ipv6()
         self.statusbar.clearMessage()
         self.repaint()
