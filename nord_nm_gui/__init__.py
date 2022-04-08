@@ -668,10 +668,10 @@ class MainWindow(QtWidgets.QMainWindow):
                                     self.connected_server = server.name
                                     return True
                         else:
-                            # self.connect_button.hide()
-                            # self.disconnect_button.show()
-                            # print("Fetching active server...")
-                            # self.repaint()
+                            self.connect_button.hide()
+                            self.disconnect_button.show()
+                            print("Fetching active server...")
+                            self.repaint()
                             item = self.country_list.findItems(
                                 country, QtCore.Qt.MatchExactly
                             )
