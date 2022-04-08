@@ -178,3 +178,17 @@ def write_conf(conf_path, config):
         config.write(configfile)
 
     configfile.close()
+
+
+def add_secrets(connection_name, username, password):
+    """
+    Add the username and password to the NetworkManager configuration.
+    """
+
+    nm_mod(connection_name, "+vpn.data", "password-flags=0")
+    nm_mod(
+        connection_name, "+vpn.secrets", f'password={password}'
+    )
+    nm_mod(connection_name, "+vpn.data", f'username={username}')
+    nm_mod(connection_name, "+ipv6.method", "ignore")
+    nm_mod(connection_name, "+vpn.data", "password-flags=0")

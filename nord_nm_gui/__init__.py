@@ -55,9 +55,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
         self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
         self.config = configparser.ConfigParser()
-
-        # the following tries to print a status bar message if it fails, but
-        # the UI has not yet been initialised
         self.username = None
         self.password = None
         self.sudo_password = None
@@ -66,11 +63,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
         self.login_ui()
-
-        """
-        Initialize system tray icon.
-        """
-
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
             f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
@@ -89,39 +81,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.setToolTip("NordVPN")
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
-
-        """
-        Initialize GUI.
-        """
-
         self.show()
 
     def quitAppEvent(self):
-        """
-        Quit GUI from system tray.
-        """
-
         qApp.quit()
 
     def closeEvent(self, event):
-        """
-        Override default close event.
-        """
-
         event.ignore()
         self.hide()
-        self.tray_icon.showMessage(
-            "NordVPN Network Manager",
-            "NordVPN Network Manager was minimized to System Tray",
-            QSystemTrayIcon.Information,
-            2500,
-        )
 
     def resume(self, activation_reason):
-        """
-        Resume from system tray.
-        """
-
         if activation_reason == 3:
             self.show()
 
@@ -514,9 +483,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.get_credentials()
 
         except PermissionError:
-            print(
-                "Insufficient Permissions to create config folder", 2000
-            )
+            print("Insufficient permissions to create config folder")
 
     def get_credentials(self):
         try:
@@ -524,7 +491,7 @@ class MainWindow(QtWidgets.QMainWindow):
             password = keyring.get_password("NordVPN", self.username)
             self.password_input.setText(password)
         except Exception as e:
-            print("Error fetching keyring", 1000)
+            print("Error fetching keyring")
 
     def parse_conf(self):
         """
@@ -696,19 +663,6 @@ class MainWindow(QtWidgets.QMainWindow):
         except subprocess.CalledProcessError:
             print("ERROR: Importing VPN configuration")
 
-    def add_secrets(self):
-        """
-        Add the username and password to the NetworkManager configuration.
-        """
-
-        nm_mod(self.connection_name, "+vpn.data", "password-flags=0")
-        nm_mod(
-            self.connection_name, "+vpn.secrets", f'password={self.password}'
-        )
-        nm_mod(self.connection_name, "+vpn.data", f'username={self.username}')
-        nm_mod(self.connection_name, "+ipv6.method", "ignore")
-        nm_mod(self.connection_name, "+vpn.data", "password-flags=0")
-
     def generate_connection_name(self):
         """
         Generate the name of the OVPN file.
@@ -743,6 +697,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 "connection", "show", "--active",
             ], stdout=subprocess.PIPE)
             output.check_returncode()
+            # get this output and then debug
+            print(output.stdout.decode("utf-8"))
 
             for line in output.stdout.decode("utf-8").split("\n"):
                 try:
@@ -936,14 +892,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.config.read(self.conf_path)
         if interfaces := get_interfaces():
             interface_string = "|".join(interfaces)
-            script = (
-                "#!/bin/bash\n\n"
-                'if [[ "$1" =~ '
-                + interface_string
-                + ' ]] && [[ "$2" =~ up|connectivity-change ]]; then\n'
-                '  nmcli con up id "' + self.generate_connection_name() + '"\n'
-                "fi\n"
-            )
+            script = f"""
+            #!/bin/bash
+            if [[ "$1" =~ '{interface_string}' ]] && [[ "$2" =~ up|connectivity-change ]]
+            then
+                nmcli con up id "' + self.generate_connection_name() + '"
+            fi
+            """
         try:
             with open(
                 os.path.join(self.scripts_path, "auto_connect"), "w"
@@ -982,8 +937,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def disable_auto_connect(self):
         """
-        Handle the enabling and disabling of auto-connect depending on UI state
-        Called everytime the auto-connect box is clicked
+        Handle enabling and disabling of auto-connect depending on UI state.
+        Called everytime the auto-connect box is clicked.
         """
 
         self.config.read(self.conf_path)
@@ -1037,20 +992,18 @@ class MainWindow(QtWidgets.QMainWindow):
         Generate bash kill switch script and move it to NetworkManager.
         """
 
-        script = (
-            "#!/bin/bash\n"
-            "PERSISTENCE_FILE="
-            + os.path.join(self.scripts_path, ".killswitch_data")
-            + "\n\n"
-            "case $2 in"
-            "  vpn-up)\n"
-            "    nmcli -f type,device connection | awk '$1~/^vpn$/ && $2~/[^\-][^\-]/ { print $2; }' > \"${PERSISTENCE_FILE}\"\n"
-            "  ;;\n"
-            "  vpn-down)\n"
-            '    xargs -n 1 -a "${PERSISTENCE_FILE}" nmcli device disconnect\n'
-            "  ;;\n"
-            "esac\n"
-        )
+        script = f"""
+        #!/bin/bash
+        PERSISTENCE_FILE={os.path.join(self.scripts_path, ".killswitch_data")}
+        case $2 in
+            vpn-up)
+            nmcli -f type,device connection | awk '$1~/^vpn$/ && $2~/[^\-][^\-]/ {{ print $2; }}' > "${{PERSISTENCE_FILE}}"
+            ;;
+            vpn-down)
+            xargs -n 1 -a "${{PERSISTENCE_FILE}}" nmcli device disconnect
+            ;;
+        esac
+        """
 
         try:
             with open(
@@ -1090,8 +1043,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def disable_kill_switch(self):
         """
-        Enables or disables Killswitch depending on UI state
-        Called everytime the Killswitch button is pressed
+        Enable or disable the kill switch depending on UI state. Called every
+        time the kill switch button is pressed.
         """
         if not self.kill_switch_button.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "kill_switch"):
             self.sudo = self.get_sudo()
@@ -1154,9 +1107,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
 
     def disable_ipv6(self):
-        """
-        Disables IPV6 system wide
-        """
         if not self.sudo_password:
             self.sudo = self.get_sudo()
             self.sudo.exec_()
@@ -1174,10 +1124,6 @@ class MainWindow(QtWidgets.QMainWindow):
             print("ERROR: disabling IPV6 failed")
 
     def enable_ipv6(self):
-        """
-        Re-enable ipv6 system wide
-        """
-
         if not self.sudo_password:
             self.sudo = self.get_sudo()
             self.sudo.exec_()
@@ -1223,7 +1169,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.disable_ipv6()
         self.get_ovpn()
         self.import_ovpn()
-        self.add_secrets()
+        self.add_secrets(self.connection_name, self.username, self.password)
         self.enable_connection(self.connection_name)
         self.statusbar.clearMessage()
         self.repaint()
@@ -1272,7 +1218,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _tr = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_tr("MainWindow", " "))
+        # self.setWindowTitle(_tr("MainWindow", " "))
         self.title_label.setText(_tr(
             "MainWindow",
             f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nord-logo.png"/></p></body></html>',
