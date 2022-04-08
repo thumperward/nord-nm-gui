@@ -3,6 +3,7 @@
 
 import configparser
 import os
+import json
 import shutil
 import subprocess
 import sys
@@ -55,6 +56,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
         self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
         self.config = configparser.ConfigParser()
+
+        with open("test/api_data.json", "r") as api_data:
+            self.api_data = json.load(api_data)
+
         self.username = None
         self.password = None
         self.sudo_password = None
@@ -297,17 +302,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
 
-        # Begin of UI logic
-        try:
-            resp = requests.get(api, timeout=5)
-            if resp.status_code == requests.codes.ok:
-                self.api_data = resp.json()
-            else:
-                print(resp.status_code, resp.reason)
-                sys.exit(1)
-        except Exception as e:
-            print(e)
-
         server_country_list = get_country_list(self.api_data)
         self.connection_type_select.addItems(connection_type_options)
         self.server_type_select.addItems(server_type_options)
@@ -511,56 +505,9 @@ class MainWindow(QtWidgets.QMainWindow):
         Request a token from NordApi by sending the email and password in json
         format. Verify the response and update the GUI.
         """
-
-        if self.user_input.text() and self.password_input.text():
-            self.username = self.user_input.text()
-            self.password = self.password_input.text()
-
-        else:
-            self.statusbar.showMessage(
-                "Username or password field cannot be empty", 2000
-            )
-        try:
-            # Post username and password to API endpoint.
-            json_data = {"username": self.username, "password": self.password}
-            resp = requests.post(
-                "https://api.nordvpn.com/v1/users/tokens",
-                json=json_data,
-                timeout=5
-            )
-            if resp.status_code == 201:
-                self.statusbar.showMessage("Login success", 2000)
-                self.repaint()
-                # Check whether credentials should be saved.
-                if self.rememberCheckbox.isChecked():
-                    try:
-                        keyring.set_password(
-                            "NordVPN", self.username, self.password
-                        )
-                        self.config["USER"]["USER_NAME"] = self.username
-                        write_conf(self.conf_path, self.config)
-                    except Exception as e:
-                        print(
-                            "Error accessing keyring", 1000
-                        )
-
-                # Otherwise, delete credentials if found.
-                elif keyring.get_credential("NordVPN", self.username):
-                    keyring.delete_password("NordVPN", self.username)
-                    self.config["USER"]["USER_NAME"] = "None"
-                    write_conf(self.conf_path, self.config)
-
-                self.hide()
-                self.main_ui()
-            else:
-                # Debug why the response failed
-                print(resp.status_code, resp.reason, resp.text)
-                self.statusbar.showMessage(
-                    "Invalid username or password", 2000
-                )
-
-        except Exception as e:
-            print("API Error: could not fetch token")
+        self.repaint()
+        self.hide()
+        self.main_ui()
 
     def get_server_list(self):
         """
