@@ -652,39 +652,33 @@ class MainWindow(QtWidgets.QMainWindow):
                 "connection", "show", "--active",
             ], stdout=subprocess.PIPE)
             output.check_returncode()
-            # TODO: this shows non-VPN connections, which is why the UI is bad
-            # TYPE hopefully shows 'vpn' for VPNs, needs checked
             for line in output.stdout.decode("utf-8").strip().split("\n"):
                 try:
                     elements = line.strip().split(":")
-                    connection_name = elements[1]
-                    connection_info = connection_name.split()
-                    country = connection_info[0]
-                    server_name, server_type = get_connection_info(
-                        connection_info
-                    )
-                    if self.server_info_list:  # vpn connected successfully
-                        for server in self.server_info_list:
-                            if server_name == server.name:
-                                self.connected_server = server.name
-                                return True
-                    else:
-                        # these are reversed
-                        # self.connect_button.hide()
-                        # self.disconnect_button.show()
-                        self.connect_button.show()
-                        self.disconnect_button.hide()
-                        # end reversal fix
-                        print("Fetching active server...")
-                        self.repaint()
-                        item = self.country_list.findItems(
-                            country, QtCore.Qt.MatchExactly
+                    if elements[0] == "vpn":
+                        connection_name = elements[1]
+                        connection_info = connection_name.split()
+                        country = connection_info[0]
+                        server_name, server_type = get_connection_info(
+                            connection_info
                         )
-                        if item:
+                        if self.server_info_list:  # vpn connected successfully
+                            for server in self.server_info_list:
+                                if server_name == server.name:
+                                    self.connected_server = server.name
+                                    return True
+                        else:
+                            self.connect_button.hide()
+                            self.disconnect_button.show()
+                            print("Fetching active server...")
+                            self.repaint()
+                            item = self.country_list.findItems(
+                                country, QtCore.Qt.MatchExactly
+                            )
                             self.country_list.setCurrentItem(item[0])
                             self.server_type_select.setCurrentIndex(
-                                server_type)
-
+                                server_type
+                            )
                             self.get_server_list()
                             for server in self.server_info_list:
                                 if server_name == server.name:
@@ -821,7 +815,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.sudo_password = self.sudo.sudo_password.text()
         try:
-            print("checking sudo")
             p1 = echo_sudo(self.sudo_password)
             p2 = subprocess.Popen(
                 ["sudo", "-S", "whoami"],
@@ -1128,7 +1121,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.disable_ipv6()
         self.get_ovpn()
         self.import_ovpn()
-        self.add_secrets(self.connection_name, self.username, self.password)
+        add_secrets(self.connection_name, self.username, self.password)
         enable_connection(self.connection_name)
         self.statusbar.clearMessage()
         self.repaint()
