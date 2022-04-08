@@ -244,22 +244,22 @@ class MainWindow(QtWidgets.QMainWindow):
         # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
         grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
 
-        # self.disconnect_button = QtWidgets.QPushButton(central_widget_)
-        # self.disconnect_button.hide()
-        # size_policy_7 = QtWidgets.QSizePolicy(
-        #     QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        # )
-        # size_policy_7.setHorizontalStretch(0)
-        # size_policy_7.setVerticalStretch(0)
-        # size_policy_7.setHeightForWidth(
-        #     self.disconnect_button.sizePolicy().hasHeightForWidth()
-        # )
-        # self.disconnect_button.setSizePolicy(size_policy_7)
-        # self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
-        # self.disconnect_button.setObjectName("disconnect_button")
-        # horizontal_layout_1.addWidget(self.disconnect_button)
-        # # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
-        # grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
+        self.disconnect_button = QtWidgets.QPushButton(central_widget_)
+        self.disconnect_button.hide()
+        size_policy_7 = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        )
+        size_policy_7.setHorizontalStretch(0)
+        size_policy_7.setVerticalStretch(0)
+        size_policy_7.setHeightForWidth(
+            self.disconnect_button.sizePolicy().hasHeightForWidth()
+        )
+        self.disconnect_button.setSizePolicy(size_policy_7)
+        self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.disconnect_button.setObjectName("disconnect_button")
+        horizontal_layout_1.addWidget(self.disconnect_button)
+        # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
+        grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
 
         vertical_layout_4 = QtWidgets.QVBoxLayout()
         vertical_layout_4.setObjectName("vertical_layout_4")
@@ -301,6 +301,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusbar = QtWidgets.QStatusBar(self)
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
+
+        # # Begin of UI logic
+        # try:
+        #     resp = requests.get(api, timeout=5)
+        #     if resp.status_code == requests.codes.ok:
+        #         self.api_data = resp.json()
+        #     else:
+        #         print(resp.status_code, resp.reason)
+        #         sys.exit(1)
+        # except Exception as e:
+        #     print(e)
 
         server_country_list = get_country_list(self.api_data)
         self.connection_type_select.addItems(connection_type_options)

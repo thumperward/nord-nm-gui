@@ -50,9 +50,6 @@ def get_server_categories(categories):
 def get_connection_info(connection_info):
     server_name = ''
     server_type = 0
-    print("Checking connection info...")
-    print(connection_info)
-
     if (
         "[Standard" in connection_info or "[Standard]" in connection_info
         or (
@@ -80,8 +77,6 @@ def get_connection_info(connection_info):
         server_type = 4
     elif "[TCP]" in connection_info:
         server_type = 1
-
-    print(server_name, server_type)
     return server_name, server_type
 
 
