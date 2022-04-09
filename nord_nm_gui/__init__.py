@@ -57,9 +57,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
         self.connected_server = None
-
+        self.bypass_api = False
         # DEBUG: bypass sudo dialogs by adding password here
         self.sudo_password = None
+
+        self.config.read(conf_path)
 
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
@@ -79,6 +81,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.setToolTip("nord-nm-gui")
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
+
+        if self.config.getboolean("SETTINGS", "bypass_api"):
+            print("Bypassing API calls and using local JSON.")
+            print("Login credentials are still needed to set up connections.")
+            self.api_data = api_data
 
         self.login_ui()
         self.show()
@@ -309,13 +316,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
-        self.config.read(conf_path)
         if self.config.getboolean("SETTINGS", "mac_randomizer"):
             self.mac_changer_box.setChecked(True)
         if self.config.getboolean("SETTINGS", "kill_switch"):
             self.kill_switch_button.setChecked(True)
         if self.config.getboolean("SETTINGS", "auto_connect"):
             self.auto_connect_box.setChecked(True)
+
         self.repaint()
         self.get_active_vpn()
         self.retranslateUi()
@@ -441,12 +448,11 @@ class MainWindow(QtWidgets.QMainWindow):
             scripts_path,
             conf_path,
             self.config
-        )  # does config exist else create
+        )
         if self.username:
             self.rememberCheckbox.setChecked(True)
             self.user_input.setText(self.username)
             self.password_input.setText(self.password)
-        # buttons here
         self.password_input.returnPressed.connect(self.loginButton.click)
         self.loginButton.clicked.connect(self.verify_credentials)
 
@@ -459,55 +465,53 @@ class MainWindow(QtWidgets.QMainWindow):
         self.username = self.user_input.text()
         self.password = self.password_input.text()
 
-        # To avoid hitting the API, uncomment the next three lines and comment
-        # the try block.
-        # self.api_data = api_data
-        # self.hide()
-        # self.main_ui()
-
-        try:
-            resp = requests.post(
-                'https://api.nordvpn.com/v1/users/tokens',
-                json={
-                    'username': self.username, 'password': self.password
-                },
-                timeout=5
-            )
-            if resp.status_code == 201:
-                print("Login succeeded, retrieving list of servers...")
-                if self.rememberCheckbox.isChecked():
-                    try:
-                        keyring.set_password(
-                            "NordVPN", self.username, self.password)
-                        self.config['USER']['USER_NAME'] = self.username
-                        write_conf(conf_path, self.config)
-                    except Exception as e:
-                        print(e)
-                else:
-                    try:
-                        keyring.delete_password("NordVPN", self.username)
-                        self.config['USER']['USER_NAME'] = 'None'
-                        write_conf(conf_path, self.config)
-                    except Exception as e:
-                        print(e)
-                try:
-                    resp = requests.get(api, timeout=5)
-                    if resp.status_code == requests.codes.ok:
-                        self.api_data = resp.json()
+        if self.config.getboolean("SETTINGS", "bypass_api"):
+            self.hide()
+            self.main_ui()
+        else:
+            try:
+                resp = requests.post(
+                    'https://api.nordvpn.com/v1/users/tokens',
+                    json={
+                        'username': self.username, 'password': self.password
+                    },
+                    timeout=5
+                )
+                if resp.status_code == 201:
+                    print("Login succeeded, retrieving list of servers...")
+                    if self.rememberCheckbox.isChecked():
+                        try:
+                            keyring.set_password(
+                                "NordVPN", self.username, self.password)
+                            self.config['USER']['USER_NAME'] = self.username
+                            write_conf(conf_path, self.config)
+                        except Exception as e:
+                            print(e)
                     else:
-                        print(resp.status_code, resp.reason)
-                        sys.exit(1)
-                except Exception as e:
-                    print(e)
+                        try:
+                            keyring.delete_password("NordVPN", self.username)
+                            self.config['USER']['USER_NAME'] = 'None'
+                            write_conf(conf_path, self.config)
+                        except Exception as e:
+                            print(e)
+                    try:
+                        resp = requests.get(api, timeout=5)
+                        if resp.status_code == requests.codes.ok:
+                            self.api_data = resp.json()
+                        else:
+                            print(resp.status_code, resp.reason)
+                            sys.exit(1)
+                    except Exception as e:
+                        print(e)
 
-                self.hide()
-                self.main_ui()
-            else:
-                self.statusbar.showMessage('Login failed.', 2000)
-                print(resp.status_code)
+                    self.hide()
+                    self.main_ui()
+                else:
+                    self.statusbar.showMessage('Login failed.', 2000)
+                    print(resp.status_code)
 
-        except Exception as e:
-            print(e)
+            except Exception as e:
+                print(e)
 
     def get_server_list(self):
         """
@@ -815,25 +819,23 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.sudo_password = self.sudo.sudo_password.text()
         try:
-            p1 = echo_sudo(self.sudo_password)
-            p2 = subprocess.Popen(
+            output = subprocess.run(
                 ["sudo", "-S", "whoami"],
                 encoding="utf-8",
-                stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            p1.stdout.close()
-            output = p2.communicate()[0].strip()
-            p2.stdout.close()
+                stdin=echo_sudo(self.sudo_password).stdout,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            ).stdout.strip()
 
             if "root" in output:
                 self.sudo.close()
                 return True
             else:
                 error = QtWidgets.QErrorMessage(self.sudo)
-                error.showMessage("Invalid Password")
+                error.showMessage("Invalid password")
                 return False
         except Exception as e:
-            print("failed", e)
+            print(e)
             self.sudo_password = None
 
     def set_auto_connect(self):
@@ -860,28 +862,19 @@ class MainWindow(QtWidgets.QMainWindow):
             print(e)
             print("ERROR building script file")
         try:
-            p1 = echo_sudo(self.sudo_password)
-            p2 = subprocess.Popen([
+            subprocess.run([
                 "sudo", "-S", "mv",
                 f'{scripts_path}/auto_connect',
                 f'{network_manager_path}auto_connect',
-            ], stdin=p1.stdout, stdout=subprocess.PIPE)
-            p1.stdout.close()
-            p2.stdout.close()
-            p3 = echo_sudo(self.sudo_password)
-            p4 = subprocess.Popen([
+            ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE)
+            subprocess.run([
                 "sudo", "-S", "chown", "root:root",
                 f'{network_manager_path}auto_connect',
-            ], stdin=p3.stdout, stdout=subprocess.PIPE,)
-            p3.stdout.close()
-            p4.stdout.close()
-            p5 = echo_sudo(self.sudo_password)
-            p6 = subprocess.Popen([
+            ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE,)
+            subprocess.run([
                 "sudo", "-S", "chmod", "744",
                 f'{network_manager_path}auto_connect',
-            ], stdin=p5.stdout, stdout=subprocess.PIPE,)
-            p5.stdout.close()
-            p6.stdout.close()
+            ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE,)
             self.config["SETTINGS"]["auto_connect"] = True
             write_conf(conf_path, self.config)
         except Exception as e:
@@ -901,14 +894,11 @@ class MainWindow(QtWidgets.QMainWindow):
             if not self.sudo_password:  # dialog was canceled
                 return False
             try:
-                p1 = echo_sudo(self.sudo_password)
-                p2 = subprocess.Popen([
+                subprocess.run([
                     "sudo", "-S", "rm",
                     f'{network_manager_path}auto_connect'
-                ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
-                p1.stdout.close()
-                p2.stdout.close()
                 self.config["SETTINGS"]["auto_connect"] = False
                 write_conf(conf_path, self.config)
             except Exception as e:
@@ -916,13 +906,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         elif not self.auto_connect_box.isChecked() and self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
             try:
-                p1 = echo_sudo(self.sudo_password)
-                p2 = subprocess.Popen([
+                subprocess.run([
                     "sudo", "-S", "rm",
                     f'{network_manager_path}auto_connect',
-                ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                p1.stdout.close()
-                p2.stdout.close()
+                ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 self.config["SETTINGS"]["auto_connect"] = False
                 write_conf(conf_path, self.config)
             except Exception as e:

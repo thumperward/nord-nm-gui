@@ -113,7 +113,6 @@ def get_interfaces():
             "--mode", "tabular",
             "--terse", "--fields", "TYPE,DEVICE", "device", "status",
         ], stdout=subprocess.PIPE)
-        output.check_returncode()
         lines = output.stdout.decode("utf-8").split("\n")
         interfaces = []
         for line in lines:
@@ -129,48 +128,43 @@ def get_interfaces():
 
 def remove_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run(
+        subprocess.run(
             ["nmcli", "connection", "delete", connection_name],
             stdin=echo_sudo(sudo_password).stdout
         )
-        connection.check_returncode()
     except Exception as e:
         print(e)
 
 
 def disable_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run(
+        subprocess.run(
             ["nmcli", "connection", "down", connection_name],
             stdin=echo_sudo(sudo_password).stdout
         )
-        connection.check_returncode()
     except Exception as e:
         print(e)
 
 
 def enable_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run(
+        subprocess.run(
             ["nmcli", "connection", "up", connection_name],
             stdin=echo_sudo(sudo_password).stdout
         )
-        connection.check_returncode()
     except Exception as e:
         print(e)
 
 
 def nm_mod(connection_name, config_option, config_value, sudo_password):
     try:
-        process = subprocess.run(
+        return subprocess.run(
             [
                 "nmcli", "connection", "modify",
                 connection_name, config_option, config_value,
             ],
             stdin=echo_sudo(sudo_password).stdout
         )
-        process.check_returncode()
-        return process
     except Exception as e:
         print(e)
 

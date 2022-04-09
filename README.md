@@ -1,14 +1,14 @@
 # NordVPN Network Manager GUI
 
-[![License Badge](https://img.shields.io/github/license/vfosterm/NordVPN-NetworkManager-Gui?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/blob/master/LICENSE)
+[![License badge](https://img.shields.io/github/license/vfosterm/NordVPN-NetworkManager-Gui?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/blob/master/LICENSE)
 [![Issues](https://img.shields.io/github/issues-closed/vfosterm/NordVPN-NetworkManager-Gui?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/issues)
 [![Release](https://img.shields.io/github/release/vfosterm/NordVPN-NetworkManager-Gui?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/releases/latest)
 [![commits-since](https://img.shields.io/github/commits-since/vfosterm/NordVPN-NetworkManager-Gui/latest?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/commits/master)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
-![Login Screen](nord_nm_gui/assets/login_new.png)
+![Login screen](nord_nm_gui/assets/login_new.png)
 
-![Main Screen](nord_nm_gui/assets/main_new.png)
+![Main screen](nord_nm_gui/assets/main_new.png)
 
 ## About
 
@@ -35,7 +35,7 @@ public domain.
 -   Auto Connect - VPN is connection is established on system start
 -   Randomize MAC - Random MAC address is assigned before establishing connection
 
-## Known Issues
+## Known issues
 
 -   No support for obfuscated servers
 
@@ -48,8 +48,10 @@ public domain.
 5.  ~Fix GUI bugs~
 6.  Move NM calls to a Python binding instead of shelling out with `subprocess`
 7.  Handle sudo properly
-8.  Add a map selector
-9.  Upstream
+8.  Use standard XDG paths / libraries for handling config paths
+9.  Use a config option to bypass Nord API calls
+10.  Add a map selector
+11.  Upstream
 
 ## WARNING
 
