@@ -84,28 +84,17 @@ class MainWindow(QtWidgets.QMainWindow):
         font.setPointSize(6)
         font.setStyleHint(QtGui.QFont.Monospace)
         self.resize(600, 650)
-
-        self.size_policy_1 = QtWidgets.QSizePolicy(
+        self.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        self.size_policy_1.setHorizontalStretch(0)
-        self.size_policy_1.setVerticalStretch(0)
-        self.size_policy_1.setHeightForWidth(
-            self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(self.size_policy_1)
+        ))
 
         self.central_widget_ = QtWidgets.QWidget(self)
         self.central_widget_.setObjectName("self.central_widget_")
         self.title_label = QtWidgets.QLabel(self.central_widget_)
-        self.size_policy_2 = QtWidgets.QSizePolicy(
+        self.title_label.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
-        )
-        self.size_policy_2.setHorizontalStretch(0)
-        self.size_policy_2.setVerticalStretch(0)
-        self.size_policy_2.setHeightForWidth(
-            self.title_label.sizePolicy().hasHeightForWidth()
-        )
-        self.title_label.setSizePolicy(self.size_policy_2)
+        ))
+
         self.title_label.setFont(font)
         self.title_label.setTextFormat(QtCore.Qt.RichText)
         self.title_label.setObjectName("title_label")
@@ -139,15 +128,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.vertical_layout_3.addWidget(self.country_list_label)
 
         self.line_1 = QtWidgets.QFrame(self.central_widget_)
-        self.size_policy_3 = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
+        self.line_1.setSizePolicy(self.set_size_policy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         )
-        self.size_policy_3.setHorizontalStretch(0)
-        self.size_policy_3.setVerticalStretch(0)
-        self.size_policy_3.setHeightForWidth(
-            self.line_1.sizePolicy().hasHeightForWidth()
-        )
-        self.line_1.setSizePolicy(self.size_policy_3)
+
         self.line_1.setMinimumSize(QtCore.QSize(180, 0))
         self.line_1.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_1.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -190,27 +174,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.vertical_layout_2 = QtWidgets.QVBoxLayout()
         self.vertical_layout_2.setObjectName("self.vertical_layout_2")
         self.server_type_select = QtWidgets.QComboBox(self.central_widget_)
-        self.size_policy_4 = QtWidgets.QSizePolicy(
+        self.server_type_select.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_4.setHorizontalStretch(0)
-        self.size_policy_4.setVerticalStretch(0)
-        self.size_policy_4.setHeightForWidth(
-            self.server_type_select.sizePolicy().hasHeightForWidth()
-        )
-        self.server_type_select.setSizePolicy(self.size_policy_4)
+        ))
+
         self.server_type_select.setObjectName("server_type_select")
         self.vertical_layout_2.addWidget(self.server_type_select)
         self.connection_type_select = QtWidgets.QComboBox(self.central_widget_)
-        self.size_policy_5 = QtWidgets.QSizePolicy(
+        self.connection_type_select.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_5.setHorizontalStretch(0)
-        self.size_policy_5.setVerticalStretch(0)
-        self.size_policy_5.setHeightForWidth(
-            self.connection_type_select.sizePolicy().hasHeightForWidth()
-        )
-        self.connection_type_select.setSizePolicy(self.size_policy_5)
+        ))
+
         self.connection_type_select.setObjectName("connection_type_select")
         self.vertical_layout_2.addWidget(self.connection_type_select)
         self.horizontal_layout_1.addLayout(self.vertical_layout_2)
@@ -220,30 +194,20 @@ class MainWindow(QtWidgets.QMainWindow):
         ))
 
         self.connect_button = QtWidgets.QPushButton(self.central_widget_)
-        self.size_policy_6 = QtWidgets.QSizePolicy(
+        self.connect_button.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_6.setHorizontalStretch(0)
-        self.size_policy_6.setVerticalStretch(0)
-        self.size_policy_6.setHeightForWidth(
-            self.connect_button.sizePolicy().hasHeightForWidth()
-        )
-        self.connect_button.setSizePolicy(self.size_policy_6)
+        ))
+
         self.connect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.connect_button.setObjectName("connect_button")
         self.horizontal_layout_1.addWidget(self.connect_button)
 
         self.disconnect_button = QtWidgets.QPushButton(self.central_widget_)
         self.disconnect_button.hide()
-        self.size_policy_7 = QtWidgets.QSizePolicy(
+        self.disconnect_button.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_7.setHorizontalStretch(0)
-        self.size_policy_7.setVerticalStretch(0)
-        self.size_policy_7.setHeightForWidth(
-            self.disconnect_button.sizePolicy().hasHeightForWidth()
-        )
-        self.disconnect_button.setSizePolicy(self.size_policy_7)
+        ))
+
         self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.disconnect_button.setObjectName("disconnect_button")
         self.horizontal_layout_1.addWidget(self.disconnect_button)
@@ -262,15 +226,9 @@ class MainWindow(QtWidgets.QMainWindow):
             "self.central_widget_label")
         self.vertical_layout_4.addWidget(self.central_widget_label)
         self.line_2 = QtWidgets.QFrame(self.central_widget_)
-        self.size_policy_8 = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_8.setHorizontalStretch(0)
-        self.size_policy_8.setVerticalStretch(0)
-        self.size_policy_8.setHeightForWidth(
-            self.line_2.sizePolicy().hasHeightForWidth()
-        )
-        self.line_2.setSizePolicy(self.size_policy_8)
+        self.line_2.setSizePolicy(self.set_size_policy(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed))
+
         self.line_2.setMinimumSize(QtCore.QSize(180, 0))
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -303,6 +261,14 @@ class MainWindow(QtWidgets.QMainWindow):
             self.get_server_list
         )
 
+    def set_size_policy(self, maximum, minimum):
+        policy = QtWidgets.QSizePolicy(maximum, minimum)
+        policy.setHorizontalStretch(0)
+        policy.setVerticalStretch(0)
+        policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(policy)
+        return policy
+
     def main_ui(self):
         """
         Display QT form for the main GUI interface.
@@ -323,14 +289,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def login_ui_central_widget(self):
         self.resize(558, 468)
-        self.size_policy_9 = QtWidgets.QSizePolicy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        self.setSizePolicy(self.set_size_policy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         )
-        self.size_policy_9.setHorizontalStretch(0)
-        self.size_policy_9.setVerticalStretch(0)
-        self.size_policy_9.setHeightForWidth(
-            self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(self.size_policy_9)
+
         self.setWindowTitle("NordVPN login")
         self.central_widget_ = QtWidgets.QWidget(self)
         self.central_widget_.setObjectName("self.central_widget_")
@@ -358,16 +320,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.usernameLabel.setObjectName("usernameLabel")
         self.horizontal_layout_4.addWidget(self.usernameLabel)
         self.user_input = QtWidgets.QLineEdit(self.central_widget_)
-        self.size_policy_10 = QtWidgets.QSizePolicy(
+        self.user_input.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding)
         )
-        self.size_policy_10.setHorizontalStretch(0)
-        self.size_policy_10.setVerticalStretch(0)
-        self.size_policy_10.setHeightForWidth(
-            self.user_input.sizePolicy().hasHeightForWidth()
-        )
-        self.user_input.setSizePolicy(self.size_policy_10)
+
         self.user_input.setMaximumSize(QtCore.QSize(200, 30))
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
         self.user_input.setAlignment(QtCore.Qt.AlignCenter)
@@ -382,16 +339,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.horizontal_layout_2.addWidget(self.passwordLabel)
         self.password_input = QtWidgets.QLineEdit(self.central_widget_)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.size_policy_11 = QtWidgets.QSizePolicy(
+        self.password_input.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
-        self.size_policy_11.setHorizontalStretch(0)
-        self.size_policy_11.setVerticalStretch(0)
-        self.size_policy_11.setHeightForWidth(
-            self.password_input.sizePolicy().hasHeightForWidth()
-        )
-        self.password_input.setSizePolicy(self.size_policy_11)
+            QtWidgets.QSizePolicy.MinimumExpanding
+        ))
+
         self.password_input.setMaximumSize(QtCore.QSize(200, 30))
         self.password_input.setAlignment(QtCore.Qt.AlignCenter)
         self.password_input.setObjectName("password_input")
@@ -408,15 +360,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.vertical_layout_6 = QtWidgets.QVBoxLayout()
         self.vertical_layout_6.setObjectName("self.vertical_layout_6")
         self.loginButton = QtWidgets.QPushButton(self.central_widget_)
-        self.size_policy_12 = QtWidgets.QSizePolicy(
+        self.loginButton.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
-        )
-        self.size_policy_12.setHorizontalStretch(0)
-        self.size_policy_12.setVerticalStretch(0)
-        self.size_policy_12.setHeightForWidth(
-            self.loginButton.sizePolicy().hasHeightForWidth()
-        )
-        self.loginButton.setSizePolicy(self.size_policy_12)
+        ))
+
         self.loginButton.setObjectName("loginButton")
         self.vertical_layout_6.addWidget(self.loginButton)
         self.rememberCheckbox = QtWidgets.QCheckBox(self.central_widget_)
