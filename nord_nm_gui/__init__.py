@@ -59,7 +59,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.connected_server = None
 
         # DEBUG: bypass sudo dialogs by adding password here
-        # self.sudo_password = ""
+        self.sudo_password = None
 
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
