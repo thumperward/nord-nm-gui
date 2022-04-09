@@ -208,14 +208,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
-    def configure_line(self, minimum, maximum):
-        line = QtWidgets.QFrame(self.central_widget_)
-        line.setSizePolicy(self.set_size_policy(minimum, maximum))
-        line.setMinimumSize(QtCore.QSize(180, 0))
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        return line
-
     def main_ui_raise(self):
         self.vertical_layout_4 = QtWidgets.QVBoxLayout()
         self.vertical_layout_4.setObjectName("self.vertical_layout_4")
@@ -254,6 +246,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.server_type_select.currentTextChanged.connect(
             self.get_server_list
         )
+
+    def configure_line(self, minimum, maximum):
+        line = QtWidgets.QFrame(self.central_widget_)
+        line.setSizePolicy(self.set_size_policy(minimum, maximum))
+        line.setMinimumSize(QtCore.QSize(180, 0))
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        return line
 
     def set_size_policy(self, minimum, maximum):
         policy = QtWidgets.QSizePolicy(minimum, maximum)
@@ -835,7 +835,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sudo = self.get_sudo()
             self.sudo.exec_()
         if not self.auto_connect_box.isChecked() and self.config.getboolean("SETTINGS", "auto_connect"):
-            if not self.sudo_password:  # dialog was canceled
+            if not self.sudo_password:  # Dialog was cancelled
                 return False
             try:
                 subprocess.run([
@@ -849,7 +849,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 print(e)
 
         elif self.auto_connect_box.isChecked() and self.get_active_vpn():
-            if not self.sudo_password:  # dialog was canceled
+            if not self.sudo_password:  # Dialog was cancelled
                 self.auto_connect_box.setChecked(False)
                 return False
             self.enable_auto_connect()
@@ -909,7 +909,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.sudo.exec_()
 
         if not self.kill_switch_button.isChecked() and self.config.getboolean("SETTINGS", "kill_switch"):
-            if not self.sudo_password:  # dialog was canceled
+            if not self.sudo_password:  # Dialog was cancelled
                 self.kill_switch_button.setChecked(False)
                 return False
             try:
@@ -926,7 +926,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 print(e)
 
         elif self.kill_switch_button.isChecked() and self.get_active_vpn():
-            if not self.sudo_password:  # dialog was canceled
+            if not self.sudo_password:  # Dialog was cancelled
                 self.kill_switch_button.setChecked(False)
                 return False
             self.enable_kill_switch()
