@@ -1156,7 +1156,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def retranslateUi(self):
         _tr = QtCore.QCoreApplication.translate
-        # self.setWindowTitle(_tr("MainWindow", " "))
+        self.setWindowTitle(_tr("MainWindow", "Server list"))
         self.title_label.setText(_tr(
             "MainWindow",
             f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nord-logo.png"/></p></body></html>',

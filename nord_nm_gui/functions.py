@@ -58,7 +58,7 @@ def country_spaces(connection_info):
 
     endpoint_number = [i for i, x in enumerate(connection_info) if '#' in x][0]
     connection_info[0] = ' '.join(connection_info[:endpoint_number])
-    for _e in range(endpoint_number-1):
+    for _element in range(endpoint_number-1):
         connection_info.pop(1)
     return connection_info
 
@@ -116,18 +116,15 @@ def get_interfaces():
         output.check_returncode()
         lines = output.stdout.decode("utf-8").split("\n")
         interfaces = []
-
         for line in lines:
             if line:
                 elements = line.strip().split(":")
-
                 if elements[0] in ["wifi", "ethernet"]:
                     interfaces.append(elements[1])
-
         return interfaces
 
-    except subprocess.CalledProcessError:
-        print("ERROR Fetching interfaces")
+    except Exception as e:
+        print(e)
 
 
 def remove_connection(connection_name, sudo_password):
@@ -137,8 +134,8 @@ def remove_connection(connection_name, sudo_password):
             stdin=echo_sudo(sudo_password).stdout
         )
         connection.check_returncode()
-    except subprocess.CalledProcessError:
-        print("ERROR: Failed to remove Connection")
+    except Exception as e:
+        print(e)
 
 
 def disable_connection(connection_name, sudo_password):
@@ -148,8 +145,8 @@ def disable_connection(connection_name, sudo_password):
             stdin=echo_sudo(sudo_password).stdout
         )
         connection.check_returncode()
-    except subprocess.CalledProcessError:
-        print("ERROR: Disconnection Failed", 2000)
+    except Exception as e:
+        print(e)
 
 
 def enable_connection(connection_name, sudo_password):
@@ -159,8 +156,8 @@ def enable_connection(connection_name, sudo_password):
             stdin=echo_sudo(sudo_password).stdout
         )
         connection.check_returncode()
-    except subprocess.CalledProcessError:
-        print("ERROR: Connection Failed", 2000)
+    except Exception as e:
+        print(e)
 
 
 def nm_mod(connection_name, config_option, config_value, sudo_password):
@@ -174,8 +171,8 @@ def nm_mod(connection_name, config_option, config_value, sudo_password):
         )
         process.check_returncode()
         return process
-    except subprocess.CalledProcessError:
-        print("ERROR: nmcli command failed", 2000)
+    except Exception as e:
+        print(e)
 
 
 def echo_sudo(sudo_password):
@@ -246,5 +243,5 @@ def check_config(base_dir, config_path, scripts_path, conf_path, config):
                 print("Error fetching keyring")
         return username, password
 
-    except PermissionError:
-        print("Insufficient permissions to create config folder")
+    except Exception as e:
+        print(e)
