@@ -58,9 +58,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.server_info_list = []
         self.connected_server = None
         self.bypass_api = False
-
         # DEBUG: bypass sudo dialogs by adding password here
         self.sudo_password = None
+
+        self.config.read(conf_path)
 
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
@@ -80,6 +81,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.setToolTip("nord-nm-gui")
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
+
+        if self.config.getboolean("SETTINGS", "bypass_api"):
+            print("Bypassing API calls and using local JSON.")
+            print("Login credentials are still needed to set up connections.")
+            self.api_data = api_data
 
         self.login_ui()
         self.show()
@@ -310,7 +316,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
-        self.config.read(conf_path)
         if self.config.getboolean("SETTINGS", "mac_randomizer"):
             self.mac_changer_box.setChecked(True)
         if self.config.getboolean("SETTINGS", "kill_switch"):
@@ -443,12 +448,11 @@ class MainWindow(QtWidgets.QMainWindow):
             scripts_path,
             conf_path,
             self.config
-        )  # does config exist else create
+        )
         if self.username:
             self.rememberCheckbox.setChecked(True)
             self.user_input.setText(self.username)
             self.password_input.setText(self.password)
-        # buttons here
         self.password_input.returnPressed.connect(self.loginButton.click)
         self.loginButton.clicked.connect(self.verify_credentials)
 
@@ -462,8 +466,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.password = self.password_input.text()
 
         if self.config.getboolean("SETTINGS", "bypass_api"):
-            print("Bypassing API calls and using local JSON.")
-            self.api_data = api_data
             self.hide()
             self.main_ui()
         else:
