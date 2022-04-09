@@ -35,24 +35,21 @@ public domain.
 -   Auto Connect - VPN is connection is established on system start
 -   Randomize MAC - Random MAC address is assigned before establishing connection
 
-## Using Installation Script
-
-Installation script should support Debian, Fedora, and Arch Linux. It will
-attempt to install the one dependency this program has
-(networkmanager-openvpn). It will also add a menu entry pointing to the current
-working directory of the installation script. So make sure you place the folder
-where you want the install to be located.
-
-__Installation script is only intended for the release version__, not the
-python script itself.
-
-Usage: `sudo ./install.sh`
-
-[You can download the latest release here.](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/releases/latest)
-
 ## Known Issues
 
 -   No support for obfuscated servers
+
+## TODO
+
+1.  ~Poetry~
+2.  ~Pre-commit and other linting~
+3.  ~Split helper functions out of GUI class~
+4.  ~Stop spamming API - dry run by getting JSON once and then commenting calls~
+5.  ~Fix GUI bugs~
+6.  Move NM calls to a Python binding instead of shelling out with `subprocess`
+7.  Handle sudo properly
+8.  Add a map selector
+9.  Upstream
 
 ## WARNING
 

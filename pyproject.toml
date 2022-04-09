@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "nord-nm-gui"
-version = "0.0.1"
+version = "0.1.0"
 description = "Graphical frontend for NordVPN / NetworkManager on Linux"
 authors = [
   "Vincent Foster-Mueller <https://github.com/vfosterm>",
