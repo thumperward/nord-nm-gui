@@ -57,7 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
         self.connected_server = None
-        self.bypass_api = False
+        self.bypass_api = "false"
         # DEBUG: bypass sudo dialogs by adding password here
         self.sudo_password = None
 
@@ -311,7 +311,7 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         # Button functionality here
-        self.connect_button.clicked.connect(self.connect)
+        self.connect_button.clicked.connect(self.connect_vpn)
         self.disconnect_button.clicked.connect(self.disconnect_vpn)
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
@@ -838,7 +838,7 @@ class MainWindow(QtWidgets.QMainWindow):
             print(e)
             self.sudo_password = None
 
-    def set_auto_connect(self):
+    def enable_auto_connect(self):
         """
         Generate auto_connect bash script and move it to NetworkManager.
         """
@@ -875,7 +875,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "sudo", "-S", "chmod", "744",
                 f'{network_manager_path}auto_connect',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE,)
-            self.config["SETTINGS"]["auto_connect"] = True
+            self.config["SETTINGS"]["auto_connect"] = "true"
             write_conf(conf_path, self.config)
         except Exception as e:
             print(e)
@@ -883,14 +883,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def disable_auto_connect(self):
         """
         Handle enabling and disabling of auto-connect depending on UI state.
-        Called everytime the auto-connect box is clicked.
+        Called every time the auto-connect box is clicked.
         """
 
-        self.config.read(conf_path)
-
-        if not self.auto_connect_box.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
+        if not self.sudo_password:
             self.sudo = self.get_sudo()
             self.sudo.exec_()
+        if not self.auto_connect_box.isChecked() and self.config.getboolean("SETTINGS", "auto_connect"):
             if not self.sudo_password:  # dialog was canceled
                 return False
             try:
@@ -899,34 +898,18 @@ class MainWindow(QtWidgets.QMainWindow):
                     f'{network_manager_path}auto_connect'
                 ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
-                self.config["SETTINGS"]["auto_connect"] = False
+                self.config["SETTINGS"]["auto_connect"] = "false"
                 write_conf(conf_path, self.config)
             except Exception as e:
                 print(e)
 
-        elif not self.auto_connect_box.isChecked() and self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
-            try:
-                subprocess.run([
-                    "sudo", "-S", "rm",
-                    f'{network_manager_path}auto_connect',
-                ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                self.config["SETTINGS"]["auto_connect"] = False
-                write_conf(conf_path, self.config)
-            except Exception as e:
-                print(e)
-        elif self.auto_connect_box.isChecked() and self.get_active_vpn() and self.sudo_password:
-            self.set_auto_connect()
-
-        elif self.auto_connect_box.isChecked() and self.get_active_vpn() and not self.sudo_password:
-            self.sudo = self.get_sudo()
-            self.sudo.exec_()
-            if self.sudo_password:
-                self.set_auto_connect()
-            else:
+        elif self.auto_connect_box.isChecked() and self.get_active_vpn():
+            if not self.sudo_password:  # dialog was canceled
                 self.auto_connect_box.setChecked(False)
                 return False
+            self.enable_auto_connect()
 
-    def set_kill_switch(self):
+    def enable_kill_switch(self):
         """
         Generate bash kill switch script and move it to NetworkManager.
         """
@@ -963,7 +946,7 @@ class MainWindow(QtWidgets.QMainWindow):
             subprocess.run([
                 "sudo", "-S", "chmod", "744", f'{network_manager_path}kill_switch',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.config["SETTINGS"]["kill_switch"] = True
+            self.config["SETTINGS"]["kill_switch"] = "true"
             write_conf(conf_path, self.config)
             self.statusbar.showMessage("Kill switch activated", 2000)
             self.repaint()
@@ -975,10 +958,12 @@ class MainWindow(QtWidgets.QMainWindow):
         Enable or disable the kill switch depending on UI state. Called every
         time the kill switch button is pressed.
         """
-        if not self.kill_switch_button.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "kill_switch"):
+
+        if not self.sudo_password:
             self.sudo = self.get_sudo()
             self.sudo.exec_()
 
+        if not self.kill_switch_button.isChecked() and self.config.getboolean("SETTINGS", "kill_switch"):
             if not self.sudo_password:  # dialog was canceled
                 self.kill_switch_button.setChecked(False)
                 return False
@@ -989,56 +974,30 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
-                self.config["SETTINGS"]["kill_switch"] = False
+                self.config["SETTINGS"]["kill_switch"] = "false"
                 write_conf(conf_path, self.config)
 
-            except subprocess.CalledProcessError:
-                print("ERROR disabling kill switch")
+            except Exception as e:
+                print(e)
 
-        elif (
-            not self.kill_switch_button.isChecked()
-            and self.sudo_password
-            and self.config.getboolean("SETTINGS", "kill_switch")
-        ):
-
-            try:
-                subprocess.run([
-                    "sudo", "-S", "rm",
-                    f'{network_manager_path}kill_switch',
-                ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                self.statusbar.showMessage("Kill switch disabled", 2000)
-                self.repaint()
-                self.config["SETTINGS"]["kill_switch"] = False
-                write_conf(conf_path, self.config)
-
-            except subprocess.CalledProcessError:
-                print("ERROR disabling kill switch")
-
-        elif self.kill_switch_button.isChecked() and self.get_active_vpn() and self.sudo_password:
-            self.set_kill_switch()
-
-        elif self.kill_switch_button.isChecked() and self.get_active_vpn() and not self.sudo_password:
-            self.sudo = self.get_sudo()
-            self.sudo.exec_()
-            if self.sudo_password:
-                self.set_kill_switch()
-            else:
+        elif self.kill_switch_button.isChecked() and self.get_active_vpn():
+            if not self.sudo_password:  # dialog was canceled
                 self.kill_switch_button.setChecked(False)
                 return False
+            self.enable_kill_switch()
 
     def disable_ipv6(self):
         if not self.sudo_password:
             self.sudo = self.get_sudo()
             self.sudo.exec_()
-
         try:
             subprocess.run([
                 "sudo", "-S", "sysctl", "-w", "net.ipv6.conf.all.disable_ipv6=1",
                 "&&",
                 "sysctl", "-w", "net.ipv6.conf.default.disable_ipv6=0",
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError:
-            print("ERROR: disabling IPV6 failed")
+        except Exception as e:
+            print(e)
 
     def enable_ipv6(self):
         if not self.sudo_password:
@@ -1051,10 +1010,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 "&&",
                 "sysctl", "-w", "net.ipv6.conf.default.disable_ipv6=0",
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except subprocess.CalledProcessError:
-            print("ERROR: Enabling IPV6 failed", 2000)
+        except Exception as e:
+            print(e)
 
-    def connect(self):
+    def connect_vpn(self):
         """
         Step through all of the UI Logic for connecting to the VPN.
         """
@@ -1074,12 +1033,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.sudo = self.get_sudo()
                 self.sudo.exec_()
                 if self.sudo_password:
-                    self.set_auto_connect()
+                    self.enable_auto_connect()
                 else:
                     self.auto_connect_box.setChecked(False)
                     return False
             else:
-                self.set_auto_connect()
+                self.enable_auto_connect()
         if self.server_type_select.currentText() == "Double VPN":
             # set to TCP; perhaps add pop up to give user the choice?
             self.connection_type_select.setCurrentIndex(1)
@@ -1097,13 +1056,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.repaint()
 
         if self.kill_switch_button.isChecked():
-            if not self.sudo_password:
-                self.sudo = self.get_sudo()
-                self.sudo.exec_()
-            if not self.sudo_password:
+            if not self.sudo_password:  # dialog was cancelled
                 self.kill_switch_button.setChecked(False)
                 return False
-            self.set_kill_switch()
+            self.enable_kill_switch()
 
         if self.get_active_vpn():
             self.connect_button.hide()
@@ -1127,11 +1083,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.statusbar.showMessage("Disabling auto-connect...", 1000)
             self.disable_auto_connect()
         if self.connection_name is None:
-            print("no connection")
+            print("No connection found.")
         else:
-            if not self.sudo_password:
-                self.sudo = self.get_sudo()
-                self.sudo.exec_()
             disable_connection(self.connection_name, self.sudo_password)
             remove_connection(self.connection_name, self.sudo_password)
         self.enable_ipv6()
