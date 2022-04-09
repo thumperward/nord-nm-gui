@@ -462,6 +462,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.password = self.password_input.text()
 
         if self.config.getboolean("SETTINGS", "bypass_api"):
+            print("Bypassing API calls and using local JSON.")
             self.api_data = api_data
             self.hide()
             self.main_ui()
