@@ -461,53 +461,53 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # To avoid hitting the API, uncomment the next three lines and comment
         # the try block.
-        self.api_data = api_data
-        self.hide()
-        self.main_ui()
+        # self.api_data = api_data
+        # self.hide()
+        # self.main_ui()
 
-        # try:
-        #     resp = requests.post(
-        #         'https://api.nordvpn.com/v1/users/tokens',
-        #         json={
-        #             'username': self.username, 'password': self.password
-        #         },
-        #         timeout=5
-        #     )
-        #     if resp.status_code == 201:
-        #         print("Login succeeded, retrieving list of servers...")
-        #         if self.rememberCheckbox.isChecked():
-        #             try:
-        #                 keyring.set_password(
-        #                     "NordVPN", self.username, self.password)
-        #                 self.config['USER']['USER_NAME'] = self.username
-        #                 write_conf(conf_path, self.config)
-        #             except Exception as e:
-        #                 print(e)
-        #         else:
-        #             try:
-        #                 keyring.delete_password("NordVPN", self.username)
-        #                 self.config['USER']['USER_NAME'] = 'None'
-        #                 write_conf(conf_path, self.config)
-        #             except Exception as e:
-        #                 print(e)
-        #         try:
-        #             resp = requests.get(api, timeout=5)
-        #             if resp.status_code == requests.codes.ok:
-        #                 self.api_data = resp.json()
-        #             else:
-        #                 print(resp.status_code, resp.reason)
-        #                 sys.exit(1)
-        #         except Exception as e:
-        #             print(e)
+        try:
+            resp = requests.post(
+                'https://api.nordvpn.com/v1/users/tokens',
+                json={
+                    'username': self.username, 'password': self.password
+                },
+                timeout=5
+            )
+            if resp.status_code == 201:
+                print("Login succeeded, retrieving list of servers...")
+                if self.rememberCheckbox.isChecked():
+                    try:
+                        keyring.set_password(
+                            "NordVPN", self.username, self.password)
+                        self.config['USER']['USER_NAME'] = self.username
+                        write_conf(conf_path, self.config)
+                    except Exception as e:
+                        print(e)
+                else:
+                    try:
+                        keyring.delete_password("NordVPN", self.username)
+                        self.config['USER']['USER_NAME'] = 'None'
+                        write_conf(conf_path, self.config)
+                    except Exception as e:
+                        print(e)
+                try:
+                    resp = requests.get(api, timeout=5)
+                    if resp.status_code == requests.codes.ok:
+                        self.api_data = resp.json()
+                    else:
+                        print(resp.status_code, resp.reason)
+                        sys.exit(1)
+                except Exception as e:
+                    print(e)
 
-        #         self.hide()
-        #         self.main_ui()
-        #     else:
-        #         self.statusbar.showMessage('Login failed.', 2000)
-        #         print(resp.status_code)
+                self.hide()
+                self.main_ui()
+            else:
+                self.statusbar.showMessage('Login failed.', 2000)
+                print(resp.status_code)
 
-        # except Exception as e:
-        #     print(e)
+        except Exception as e:
+            print(e)
 
     def get_server_list(self):
         """
@@ -547,7 +547,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.server_info_list.append(server)
 
         if server_name_list:
-            # Sort lists to be in the same order
+            # Sort lists to be in the same order.
             server_name_list, self.domain_list, self.server_info_list = (
                 list(x) for x in zip(*sorted(
                     zip(server_name_list, self.domain_list, self.server_info_list),
@@ -563,7 +563,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_ovpn(self):
         """
-        Get OVPN file from nord servers and save it to a temporary location.
+        Get an OVPN file from the NordVPN servers and save it locally.
         e.g. https://downloads.nordcdn.com/configs/files/ovpn_udp/servers/sg173.nordvpn.com.udp.ovpn
         """
 
@@ -604,8 +604,8 @@ class MainWindow(QtWidgets.QMainWindow):
             output.check_returncode()
             os.remove(path)
 
-        except subprocess.CalledProcessError:
-            print("ERROR: Importing VPN configuration")
+        except Exception as e:
+            print(e)
 
     def generate_connection_name(self):
         """
@@ -623,6 +623,48 @@ class MainWindow(QtWidgets.QMainWindow):
         return (
             f"{server.name} [{category_name}] [{self.connection_type_select.currentText()}]"
         )
+
+    def check_selected_country_vpns(self, server_name):
+        """
+        The selected country has entries, probably because it was selected in
+        the UI.
+        """
+
+        print("Checking if VPN is in the selected country...")
+        for server in self.server_info_list:
+            if server_name == server.name:
+                print(f"{server_name} is a NordVPN endpoint.")
+                self.connected_server = server.name
+
+    def scan_countries_for_vpn(self, country, server_type, server_name, connection_name):
+        """
+        There is no selected country, probably because the program has just
+        been started. Search for a country matching the name of the VPN
+        connection: if one is found, select it in the UI.
+        """
+
+        print(f"Fetching endpoints for {country}...")
+        self.connect_button.hide()
+        self.disconnect_button.show()
+        self.repaint()
+        try:
+            item = self.country_list.findItems(country, QtCore.Qt.MatchExactly)
+            self.country_list.setCurrentItem(item[0])
+            self.server_type_select.setCurrentIndex(server_type)
+            self.get_server_list()
+            for server in self.server_info_list:
+                if server_name == server.name:
+                    server_list_item = self.server_list.findItems(
+                        f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
+                        QtCore.Qt.MatchExactly
+                    )
+                    self.server_list.setCurrentItem(server_list_item[0])
+                    self.server_list.setFocus()
+                    self.connection_name = connection_name
+                    print(f"Found the {server.name} endpoint.")
+                    self.connected_server = server.name
+        except Exception as e:
+            print(e)
 
     def get_active_vpn(self):
         """
@@ -650,49 +692,13 @@ class MainWindow(QtWidgets.QMainWindow):
                     )
                     print(f"Is '{server_name}' a NordVPN endpoint?")
                     if self.server_info_list:
-                        # The selected country has entries, probably because
-                        # It was selected in the UI.
-                        print("Checking if VPN is in the selected country...")
-                        for server in self.server_info_list:
-                            if server_name == server.name:
-                                print(f"{server_name} is a NordVPN endpoint.")
-                                self.connected_server = server.name
-                                return True
+                        self.check_selected_country_vpns(server_name)
+                        return True
                     else:
-                        # There is no selected country, probably because the
-                        # program has just been started. Search for a country
-                        # matching the name of the VPN connection: if one is
-                        # found, select it in the UI
-                        print(f"Fetching endpoints for {country}...")
-                        self.connect_button.hide()
-                        self.disconnect_button.show()
-                        self.repaint()
-                        try:
-                            item = self.country_list.findItems(
-                                country, QtCore.Qt.MatchExactly
-                            )
-                            self.country_list.setCurrentItem(item[0])
-                            self.server_type_select.setCurrentIndex(
-                                server_type
-                            )
-                            self.get_server_list()
-                            for server in self.server_info_list:
-                                if server_name == server.name:
-                                    server_list_item = self.server_list.findItems(
-                                        f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
-                                        QtCore.Qt.MatchExactly,
-                                    )
-                                    self.server_list.setCurrentItem(
-                                        server_list_item[0]
-                                    )
-                                    self.server_list.setFocus()
-                                    self.connection_name = connection_name
-                                    print(f"Found the {server.name} endpoint.")
-                                    self.connected_server = server.name
-                                    return False
-                        except Exception as e:
-                            print(e)
-
+                        self.scan_countries_for_vpn(
+                            country, server_type, server_name, connection_name
+                        )
+                        return False
         except Exception as e:
             print(e)
 
@@ -727,11 +733,11 @@ class MainWindow(QtWidgets.QMainWindow):
                     ])
                     subprocess.run(["nmcli", "connection", "up", uuid])
 
-            print("Random MAC Address assigned", 2000)
+            print("Random MAC Address assigned")
             write_conf(conf_path, self.config)
             self.repaint()
-        except subprocess.CalledProcessError:
-            print("ERROR: Randomizer failed", 2000)
+        except Exception as e:
+            print(e)
             self.repaint()
 
     def get_sudo(self):
@@ -791,7 +797,6 @@ class MainWindow(QtWidgets.QMainWindow):
         sudo.sudo_text_label.setText(
             '<html><head/><body><p>VPN Network Manager requires <span style=" font-weight:600;">sudo</span> permissions. Please input the <span style=" font-weight:600;">sudo</span> Password or run the program with elevated privileges.</p></body></html>'
         )
-        # button functionality here
         sudo.sudo_accept_box.accepted.connect(self.check_sudo)
         sudo.sudo_accept_box.rejected.connect(self.close_sudo)
         QtCore.QMetaObject.connectSlotsByName(sudo)
@@ -799,7 +804,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def close_sudo(self):
         # Clear sudo password when cancel is pressed.
-
         self.sudo_password = None
         self.sudo.close()
 
