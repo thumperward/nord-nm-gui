@@ -99,9 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.title_label.setTextFormat(QtCore.Qt.RichText)
         self.title_label.setObjectName("title_label")
 
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.statusbar.setObjectName("statusbar")
-        self.setStatusBar(self.statusbar)
+        self.configure_status_bar()
 
     def main_ui_grid(self):
         self.grid_layout_1 = QtWidgets.QGridLayout(self.central_widget_)
@@ -126,16 +124,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.country_list_label = QtWidgets.QLabel(self.central_widget_)
         self.country_list_label.setObjectName("country_list_label")
         self.vertical_layout_3.addWidget(self.country_list_label)
-
-        self.line_1 = QtWidgets.QFrame(self.central_widget_)
-        self.line_1.setSizePolicy(self.set_size_policy(
-            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        self.line_1 = self.configure_line(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
-
-        self.line_1.setMinimumSize(QtCore.QSize(180, 0))
-        self.line_1.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_1.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_1.setObjectName("line")
         self.vertical_layout_3.addWidget(self.line_1)
 
     def main_ui_checkboxes(self):
@@ -217,6 +208,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
+    def configure_line(self, minimum, maximum):
+        line = QtWidgets.QFrame(self.central_widget_)
+        line.setSizePolicy(self.set_size_policy(minimum, maximum))
+        line.setMinimumSize(QtCore.QSize(180, 0))
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        return line
+
     def main_ui_raise(self):
         self.vertical_layout_4 = QtWidgets.QVBoxLayout()
         self.vertical_layout_4.setObjectName("self.vertical_layout_4")
@@ -224,15 +223,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.central_widget_label.setObjectName(
             "self.central_widget_label")
         self.vertical_layout_4.addWidget(self.central_widget_label)
-        self.line_2 = QtWidgets.QFrame(self.central_widget_)
-        self.line_2.setSizePolicy(self.set_size_policy(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed))
-
-        self.line_2.setMinimumSize(QtCore.QSize(180, 0))
-        self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
-        self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line_2.setObjectName("self.line_2")
+        self.line_2 = self.configure_line(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
+        )
         self.vertical_layout_4.addWidget(self.line_2)
+
         self.server_list = QtWidgets.QListWidget(self.central_widget_)
         self.server_list.setObjectName("server_list")
         self.vertical_layout_4.addWidget(self.server_list)
@@ -260,8 +255,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.get_server_list
         )
 
-    def set_size_policy(self, maximum, minimum):
-        policy = QtWidgets.QSizePolicy(maximum, minimum)
+    def set_size_policy(self, minimum, maximum):
+        policy = QtWidgets.QSizePolicy(minimum, maximum)
         policy.setHorizontalStretch(0)
         policy.setVerticalStretch(0)
         policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
@@ -381,9 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.login_ui_widgets()
 
         self.setCentralWidget(self.central_widget_)
-        self.statusbar = QtWidgets.QStatusBar(self)
-        self.statusbar.setObjectName("statusbar")
-        self.setStatusBar(self.statusbar)
+        self.configure_status_bar()
         self.retranslate_login_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -400,6 +393,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.password_input.setText(self.password)
         self.password_input.returnPressed.connect(self.loginButton.click)
         self.loginButton.clicked.connect(self.verify_credentials)
+
+    def configure_status_bar(self):
+        self.statusbar = QtWidgets.QStatusBar(self)
+        self.statusbar.setObjectName("statusbar")
+        self.setStatusBar(self.statusbar)
 
     def verify_credentials(self):
         """
@@ -964,6 +962,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Step through all of the UI Logic for connecting to the VPN.
         """
+        if not self.sudo_password:
+            self.sudo = self.get_sudo()
+            self.sudo.exec_()
+
         if self.server_list.findItems("No servers found", QtCore.Qt.MatchExactly):
             self.statusbar.showMessage("No servers to connect to.", 2000)
             self.repaint()
@@ -976,25 +978,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.config["SETTINGS"]["mac_randomizer"] = "false"
         write_conf(conf_path, self.config)
         if self.auto_connect_box.isChecked():
-            if not self.sudo_password:
-                self.sudo = self.get_sudo()
-                self.sudo.exec_()
-                if self.sudo_password:
-                    self.enable_auto_connect()
-                else:
-                    self.auto_connect_box.setChecked(False)
-                    return False
-            else:
-                self.enable_auto_connect()
+            if not self.sudo_password:  # Dialog was cancelled
+                self.auto_connect_box.setChecked(False)
+                return False
+            self.enable_auto_connect()
         if self.server_type_select.currentText() == "Double VPN":
             # set to TCP; perhaps add pop up to give user the choice?
             self.connection_type_select.setCurrentIndex(1)
         self.disable_ipv6()
         self.get_ovpn()
         self.import_ovpn()
-        if not self.sudo_password:
-            self.sudo = self.get_sudo()
-            self.sudo.exec_()
         add_secrets(
             self.connection_name, self.username, self.password, self.sudo_password
         )
@@ -1003,7 +996,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.repaint()
 
         if self.kill_switch_button.isChecked():
-            if not self.sudo_password:  # dialog was cancelled
+            if not self.sudo_password:  # Dialog was cancelled
                 self.kill_switch_button.setChecked(False)
                 return False
             self.enable_kill_switch()
