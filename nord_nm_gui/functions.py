@@ -1,4 +1,6 @@
 import subprocess
+import keyring
+import os
 
 
 def get_country_list(api_data):
@@ -184,3 +186,47 @@ def add_secrets(connection_name, username, password, sudo_password):
     nm_mod(connection_name, "+vpn.data", f'username={username}', sudo_password)
     nm_mod(connection_name, "+ipv6.method", "ignore", sudo_password)
     nm_mod(connection_name, "+vpn.data", "password-flags=0", sudo_password)
+
+
+def check_config(base_dir, config_path, scripts_path, conf_path, config):
+    """
+    Check if config directories and files exist and create them if they do
+    not. If username is found in config, fetch password from keyring
+    """
+
+    username = None
+    password = None
+
+    try:
+        if not os.path.isdir(base_dir):
+            os.mkdir(base_dir)
+        if not os.path.isdir(config_path):
+            os.mkdir(config_path)
+        if not os.path.isdir(scripts_path):
+            os.mkdir(scripts_path)
+        if not os.path.isfile(conf_path):
+            config["USER"] = {"USER_NAME": "None"}
+            config["SETTINGS"] = {
+                "MAC_RANDOMIZER": "false",
+                "KILL_SWITCH": "false",
+                "AUTO_CONNECT": "false",
+            }
+            print("No config file found, writing defaults")
+            write_conf(conf_path, config)
+
+        config.read(conf_path)
+        if (
+            config.has_option("USER", "USER_NAME")
+            and config.get("USER", "USER_NAME") != "None"
+        ):
+            print("User found in config, retrieving password from keyring")
+            username = config.get("USER", "USER_NAME")
+            try:
+                keyring.get_keyring()
+                password = keyring.get_password("NordVPN", username)
+            except Exception as e:
+                print("Error fetching keyring")
+        return username, password
+
+    except PermissionError:
+        print("Insufficient permissions to create config folder")
