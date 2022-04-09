@@ -10,7 +10,6 @@ import sys
 import time
 from collections import namedtuple
 
-import keyring
 import prctl
 import requests
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -31,6 +30,15 @@ api = "https://api.nordvpn.com/server"
 ServerInfo = namedtuple(
     "ServerInfo", "name, country, domain, type, load, categories"
 )
+base_dir = os.path.join(
+    os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
+)
+config_path = os.path.join(os.path.abspath(base_dir), ".configs")
+scripts_path = os.path.join(os.path.abspath(base_dir), ".scripts")
+network_manager_path = "/etc/NetworkManager/dispatcher.d/"
+conf_path = os.path.join(config_path, "nord_settings.conf")
+with open("test/api_data.json", "r") as api_json:
+    api_data = json.load(api_json)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -44,30 +52,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon(
             f"{os.path.dirname(__file__)}/assets/nordvpnicon.png")
         )
-        self.base_dir = os.path.join(
-            os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
-        )  # /home/username/.nordnmconfigs
-        self.config_path = os.path.join(
-            os.path.abspath(self.base_dir), ".configs"
-        )
-        self.scripts_path = os.path.join(
-            os.path.abspath(self.base_dir), ".scripts"
-        )
-        self.network_manager_path = "/etc/NetworkManager/dispatcher.d/"
-        self.conf_path = os.path.join(self.config_path, "nord_settings.conf")
+
         self.config = configparser.ConfigParser()
-
-        with open("test/api_data.json", "r") as api_data:
-            self.api_data = json.load(api_data)
-
-        self.username = None
-        self.password = None
-        self.sudo_password = None
-        self.connection_name = None
-        self.connected_server = None
         self.domain_list = []
         self.server_info_list = []
-        self.login_ui()
+
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
             f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
@@ -86,6 +75,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.setToolTip("nord-nm-gui")
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
+
+        self.login_ui()
         self.show()
 
     def quitAppEvent(self):
@@ -103,6 +94,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Display QT form for the main GUI interface.
         """
+
         font = QtGui.QFont()
         font.setPointSize(6)
         font.setStyleHint(QtGui.QFont.Monospace)
@@ -255,7 +247,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.disconnect_button.setObjectName("disconnect_button")
         horizontal_layout_1.addWidget(self.disconnect_button)
-        # BROKEN: one of these two calls to grid_layout_1.addLayout() is wrong
         grid_layout_1.addLayout(horizontal_layout_1, 2, 0, 1, 2)
 
         vertical_layout_4 = QtWidgets.QVBoxLayout()
@@ -299,17 +290,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusbar.setObjectName("statusbar")
         self.setStatusBar(self.statusbar)
 
-        # # Begin of UI logic
-        # try:
-        #     resp = requests.get(api, timeout=5)
-        #     if resp.status_code == requests.codes.ok:
-        #         self.api_data = resp.json()
-        #     else:
-        #         print(resp.status_code, resp.reason)
-        #         sys.exit(1)
-        # except Exception as e:
-        #     print(e)
-
         server_country_list = get_country_list(self.api_data)
         self.connection_type_select.addItems(connection_type_options)
         self.server_type_select.addItems(server_type_options)
@@ -325,7 +305,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
-        self.parse_conf()
+        self.config.read(conf_path)
+        if self.config.getboolean("SETTINGS", "mac_randomizer"):
+            self.mac_changer_box.setChecked(True)
+        if self.config.getboolean("SETTINGS", "kill_switch"):
+            self.kill_switch_button.setChecked(True)
+        if self.config.getboolean("SETTINGS", "auto_connect"):
+            self.auto_connect_box.setChecked(True)
         self.repaint()
         self.get_active_vpn()
         self.retranslateUi()
@@ -446,10 +432,10 @@ class MainWindow(QtWidgets.QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(self)
 
         self.username, self.password = check_config(
-            self.base_dir,
-            self.config_path,
-            self.scripts_path,
-            self.conf_path,
+            base_dir,
+            config_path,
+            scripts_path,
+            conf_path,
             self.config
         )  # does config exist else create
         if self.username:
@@ -460,26 +446,59 @@ class MainWindow(QtWidgets.QMainWindow):
         self.password_input.returnPressed.connect(self.loginButton.click)
         self.loginButton.clicked.connect(self.verify_credentials)
 
-    def parse_conf(self):
-        """
-        Parse config and manipulate UI to match.
-        """
-
-        self.config.read(self.conf_path)
-        if self.config.getboolean("SETTINGS", "mac_randomizer"):
-            self.mac_changer_box.setChecked(True)
-        if self.config.getboolean("SETTINGS", "kill_switch"):
-            self.kill_switch_button.setChecked(True)
-        if self.config.getboolean("SETTINGS", "auto_connect"):
-            self.auto_connect_box.setChecked(True)
-
     def verify_credentials(self):
         """
         Request a token from NordApi by sending the email and password in json
         format. Verify the response and update the GUI.
         """
-        self.hide()
-        self.main_ui()
+
+        self.username = self.user_input.text()
+        self.password = self.password_input.text()
+
+        try:
+            resp = requests.post(
+                'https://api.nordvpn.com/v1/users/tokens',
+                json={
+                    'username': self.username, 'password': self.password
+                },
+                timeout=5
+            )
+            if resp.status_code == 201:
+                print("Login succeeded, retrieving list of servers...")
+                if self.rememberCheckbox.isChecked():
+                    try:
+                        keyring.set_password(
+                            "NordVPN", self.username, self.password)
+                        self.config['USER']['USER_NAME'] = self.username
+                        write_conf()
+                    except Exception as e:
+                        print(e)
+                else:
+                    try:
+                        keyring.delete_password("NordVPN", self.username)
+                        self.config['USER']['USER_NAME'] = 'None'
+                        write_conf()
+                    except Exception as e:
+                        print(e)
+                try:
+                    resp = requests.get(api, timeout=5)
+                    if resp.status_code == requests.codes.ok:
+                        self.api_data = resp.json()
+                    else:
+                        print(resp.status_code, resp.reason)
+                        sys.exit(1)
+                except Exception as e:
+                    print(e)
+                # self.api_data = api_data
+
+                self.hide()
+                self.main_ui()
+            else:
+                self.statusbar.showMessage('Login failed.', 2000)
+                print(resp.status_code)
+
+        except Exception as e:
+            print(e)
 
     def get_server_list(self):
         """
@@ -548,7 +567,7 @@ class MainWindow(QtWidgets.QMainWindow):
             f"{configs_path}/{obs}_{prot}/servers/{filename}", stream=True
         )
         if ovpn_file.status_code == requests.codes.ok:
-            self.ovpn_path = os.path.join(self.config_path, filename)
+            self.ovpn_path = os.path.join(config_path, filename)
             with open(self.ovpn_path, "wb") as out_file:
                 shutil.copyfileobj(ovpn_file.raw, out_file)
         else:
@@ -567,7 +586,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ovpn_file = f'{self.connection_name}.ovpn'
 
             # Change name from default
-            path = os.path.join(self.config_path, ovpn_file)
+            path = os.path.join(config_path, ovpn_file)
             shutil.copy(self.ovpn_path, path)
             os.remove(self.ovpn_path)
             output = subprocess.run([
@@ -693,7 +712,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     subprocess.run(["nmcli", "connection", "up", uuid])
 
             print("Random MAC Address assigned", 2000)
-            write_conf(self.conf_path, self.config)
+            write_conf(conf_path, self.config)
             self.repaint()
         except subprocess.CalledProcessError:
             print("ERROR: Randomizer failed", 2000)
@@ -802,7 +821,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Generate auto_connect bash script and move it to NetworkManager.
         """
 
-        self.config.read(self.conf_path)
+        self.config.read(conf_path)
         if interfaces := get_interfaces():
             interface_string = "|".join(interfaces)
             script = f"""
@@ -814,7 +833,7 @@ class MainWindow(QtWidgets.QMainWindow):
             """
         try:
             with open(
-                os.path.join(self.scripts_path, "auto_connect"), "w"
+                os.path.join(scripts_path, "auto_connect"), "w"
             ) as auto_connect:
                 print(script, file=auto_connect)
         except Exception as e:
@@ -824,27 +843,27 @@ class MainWindow(QtWidgets.QMainWindow):
             p1 = echo_sudo(self.sudo_password)
             p2 = subprocess.Popen([
                 "sudo", "-S", "mv",
-                f'{self.scripts_path}/auto_connect',
-                f'{self.network_manager_path}auto_connect',
+                f'{scripts_path}/auto_connect',
+                f'{network_manager_path}auto_connect',
             ], stdin=p1.stdout, stdout=subprocess.PIPE)
             p1.stdout.close()
             p2.stdout.close()
             p3 = echo_sudo(self.sudo_password)
             p4 = subprocess.Popen([
                 "sudo", "-S", "chown", "root:root",
-                f'{self.network_manager_path}auto_connect',
+                f'{network_manager_path}auto_connect',
             ], stdin=p3.stdout, stdout=subprocess.PIPE,)
             p3.stdout.close()
             p4.stdout.close()
             p5 = echo_sudo(self.sudo_password)
             p6 = subprocess.Popen([
                 "sudo", "-S", "chmod", "744",
-                f'{self.network_manager_path}auto_connect',
+                f'{network_manager_path}auto_connect',
             ], stdin=p5.stdout, stdout=subprocess.PIPE,)
             p5.stdout.close()
             p6.stdout.close()
             self.config["SETTINGS"]["auto_connect"] = True
-            write_conf(self.conf_path, self.config)
+            write_conf(conf_path, self.config)
         except Exception as e:
             print(e)
 
@@ -854,7 +873,7 @@ class MainWindow(QtWidgets.QMainWindow):
         Called everytime the auto-connect box is clicked.
         """
 
-        self.config.read(self.conf_path)
+        self.config.read(conf_path)
 
         if not self.auto_connect_box.isChecked() and not self.sudo_password and self.config.getboolean("SETTINGS", "auto_connect"):
             self.sudo = self.get_sudo()
@@ -865,13 +884,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 p1 = echo_sudo(self.sudo_password)
                 p2 = subprocess.Popen([
                     "sudo", "-S", "rm",
-                    f'{self.network_manager_path}auto_connect'
+                    f'{network_manager_path}auto_connect'
                 ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
                 p1.stdout.close()
                 p2.stdout.close()
                 self.config["SETTINGS"]["auto_connect"] = False
-                write_conf(self.conf_path, self.config)
+                write_conf(conf_path, self.config)
             except Exception as e:
                 print(e)
 
@@ -880,12 +899,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 p1 = echo_sudo(self.sudo_password)
                 p2 = subprocess.Popen([
                     "sudo", "-S", "rm",
-                    f'{self.network_manager_path}auto_connect',
+                    f'{network_manager_path}auto_connect',
                 ], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 p1.stdout.close()
                 p2.stdout.close()
                 self.config["SETTINGS"]["auto_connect"] = False
-                write_conf(self.conf_path, self.config)
+                write_conf(conf_path, self.config)
             except Exception as e:
                 print(e)
         elif self.auto_connect_box.isChecked() and self.get_active_vpn() and self.sudo_password:
@@ -907,7 +926,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         script = f"""
         #!/bin/bash
-        PERSISTENCE_FILE={os.path.join(self.scripts_path, ".killswitch_data")}
+        PERSISTENCE_FILE={os.path.join(scripts_path, ".killswitch_data")}
         case $2 in
             vpn-up)
             nmcli -f type,device connection | awk '$1~/^vpn$/ && $2~/[^\-][^\-]/ {{ print $2; }}' > "${{PERSISTENCE_FILE}}"
@@ -920,25 +939,25 @@ class MainWindow(QtWidgets.QMainWindow):
 
         try:
             with open(
-                os.path.join(self.scripts_path, "kill_switch"), "w"
+                os.path.join(scripts_path, "kill_switch"), "w"
             ) as kill_switch:
                 print(script, file=kill_switch)
 
             subprocess.run([
                 "sudo", "-S", "mv",
-                f'{self.scripts_path}/kill_switch',
-                f'{self.network_manager_path}kill_switch',
+                f'{scripts_path}/kill_switch',
+                f'{network_manager_path}kill_switch',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             time.sleep(0.5)
             subprocess.run([
-                "sudo", "-S", "chown", "root:root", f'{self.network_manager_path}kill_switch',
+                "sudo", "-S", "chown", "root:root", f'{network_manager_path}kill_switch',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             time.sleep(0.5)
             subprocess.run([
-                "sudo", "-S", "chmod", "744", f'{self.network_manager_path}kill_switch',
+                "sudo", "-S", "chmod", "744", f'{network_manager_path}kill_switch',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             self.config["SETTINGS"]["kill_switch"] = True
-            write_conf(self.conf_path, self.config)
+            write_conf(conf_path, self.config)
             self.statusbar.showMessage("Kill switch activated", 2000)
             self.repaint()
         except Exception as e:
@@ -958,13 +977,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 return False
             try:
                 subprocess.run([
-                    "sudo", "-S", "rm", f'{self.network_manager_path}kill_switch',
+                    "sudo", "-S", "rm", f'{network_manager_path}kill_switch',
                 ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
                 self.config["SETTINGS"]["kill_switch"] = False
-                write_conf(self.conf_path, self.config)
+                write_conf(conf_path, self.config)
 
             except subprocess.CalledProcessError:
                 print("ERROR disabling kill switch")
@@ -978,12 +997,12 @@ class MainWindow(QtWidgets.QMainWindow):
             try:
                 subprocess.run([
                     "sudo", "-S", "rm",
-                    f'{self.network_manager_path}kill_switch',
+                    f'{network_manager_path}kill_switch',
                 ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
                 self.config["SETTINGS"]["kill_switch"] = False
-                write_conf(self.conf_path, self.config)
+                write_conf(conf_path, self.config)
 
             except subprocess.CalledProcessError:
                 print("ERROR disabling kill switch")
@@ -1038,7 +1057,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.config["SETTINGS"]["mac_randomizer"] = "true"
         else:
             self.config["SETTINGS"]["mac_randomizer"] = "false"
-        write_conf(self.conf_path, self.config)
+        write_conf(conf_path, self.config)
         if self.auto_connect_box.isChecked():
             if not self.sudo_password:
                 self.sudo = self.get_sudo()
