@@ -57,7 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
         self.connected_server = None
-        self.bypass_api = False
+        self.bypass_api = "false"
         # DEBUG: bypass sudo dialogs by adding password here
         self.sudo_password = None
 
@@ -875,7 +875,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "sudo", "-S", "chmod", "744",
                 f'{network_manager_path}auto_connect',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE,)
-            self.config["SETTINGS"]["auto_connect"] = True
+            self.config["SETTINGS"]["auto_connect"] = "true"
             write_conf(conf_path, self.config)
         except Exception as e:
             print(e)
@@ -898,7 +898,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     f'{network_manager_path}auto_connect'
                 ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE
                 )
-                self.config["SETTINGS"]["auto_connect"] = False
+                self.config["SETTINGS"]["auto_connect"] = "false"
                 write_conf(conf_path, self.config)
             except Exception as e:
                 print(e)
@@ -946,7 +946,7 @@ class MainWindow(QtWidgets.QMainWindow):
             subprocess.run([
                 "sudo", "-S", "chmod", "744", f'{network_manager_path}kill_switch',
             ], stdin=echo_sudo(self.sudo_password).stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            self.config["SETTINGS"]["kill_switch"] = True
+            self.config["SETTINGS"]["kill_switch"] = "true"
             write_conf(conf_path, self.config)
             self.statusbar.showMessage("Kill switch activated", 2000)
             self.repaint()
@@ -974,7 +974,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 )
                 self.statusbar.showMessage("Kill switch disabled", 2000)
                 self.repaint()
-                self.config["SETTINGS"]["kill_switch"] = False
+                self.config["SETTINGS"]["kill_switch"] = "false"
                 write_conf(conf_path, self.config)
 
             except Exception as e:
