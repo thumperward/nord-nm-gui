@@ -57,6 +57,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
 
+        # DEBUG: bypass sudo dialogs by adding password here
+        # self.sudo_password = ""
+
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
             f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
@@ -470,14 +473,14 @@ class MainWindow(QtWidgets.QMainWindow):
                         keyring.set_password(
                             "NordVPN", self.username, self.password)
                         self.config['USER']['USER_NAME'] = self.username
-                        write_conf()
+                        write_conf(conf_path, self.config)
                     except Exception as e:
                         print(e)
                 else:
                     try:
                         keyring.delete_password("NordVPN", self.username)
                         self.config['USER']['USER_NAME'] = 'None'
-                        write_conf()
+                        write_conf(conf_path, self.config)
                     except Exception as e:
                         print(e)
                 try:
