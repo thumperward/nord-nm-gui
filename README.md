@@ -49,7 +49,7 @@ public domain.
 6.  Move NM calls to a Python binding instead of shelling out with `subprocess`
 7.  Handle sudo properly
 8.  Use standard XDG paths / libraries for handling config paths
-9.  Use a config option to bypass Nord API calls
+9.  ~Use a config option to bypass Nord API calls~
 10.  Add a map selector
 11.  Upstream
 
