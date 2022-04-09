@@ -71,10 +71,14 @@ connections, so should still be entered.
 -   ~Use a config option to bypass Nord API calls~
 -   ~Change the option to bypass the API so it passes a path for the JSON file~
 -   Convert `print()`s to either status bar / taskbar notices or proper logging
+-   Always cache the `api_data.json` and try to re-use it, with a config option
+    to force it to be downloaded
 -   Move NM calls to a Python binding instead of shelling out with `subprocess`
 -   Handle sudo properly
 -   Use `xdg` for handling config paths
 -   Fix the .desktop icon path to be generic or put the icon where it's needed
+-   Add tests
+-   Package with PyInstaller or standard linux packaging tools
 -   Add a map selector
 -   Upstream
 
