@@ -35,6 +35,28 @@ public domain.
 -   Auto Connect - VPN is connection is established on system start
 -   Randomize MAC - Random MAC address is assigned before establishing connection
 
+## Configuration
+
+The program looks for `~/.nornconfigs/.configs/nord_settings.conf` and will
+create it if not present. This contains the following structure:
+
+```cfg
+[USER]
+user_name = thumperward@hotmail.com
+
+[SETTINGS]
+mac_randomizer = false
+kill_switch = false
+auto_connect = false
+json_path = /home/chris/api_data.json
+```
+
+If `json_path` is specified the the program will skip authenticating against
+the NordVPN API and fetching the API data json on startup: this is because this
+API has rate-limiting and hitting it constantly will result in rejections. The
+credentials used on login are still used to actually authenticate VPN
+connections, so should still be entered.
+
 ## Known issues
 
 -   No support for obfuscated servers
@@ -44,15 +66,16 @@ public domain.
 1.  ~Poetry~
 2.  ~Pre-commit and other linting~
 3.  ~Split helper functions out of GUI class~
-4.  ~Stop spamming API - dry run by getting JSON once and then commenting calls~
+4.  ~Stop spamming API: dry run by getting JSON once and then commenting calls~
 5.  ~Fix GUI bugs~
 6.  ~Use a config option to bypass Nord API calls~
-7.  Move NM calls to a Python binding instead of shelling out with `subprocess`
-8.  Handle sudo properly
-9.  Use `xdg` for handling config paths
-10.  Fix the .desktop icon path to be generic, or put the icon where it's needed
-11.  Add a map selector
-12.  Upstream
+7.  ~Change the option to bypass the API so it passes a path for the JSON file~
+8.  Move NM calls to a Python binding instead of shelling out with `subprocess`
+9.  Handle sudo properly
+10.  Use `xdg` for handling config paths
+11.  Fix the .desktop icon path to be generic or put the icon where it's needed
+12.  Add a map selector
+13.  Upstream
 
 ## WARNING
 

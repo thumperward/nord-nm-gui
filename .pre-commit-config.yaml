@@ -17,7 +17,7 @@ repos:
           - --baseline
           - .secrets.baseline
           - --exclude-files
-          - nord_nm_gui/assets/api_data.json
+          - tests/api_data.json
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.31.1
     hooks:

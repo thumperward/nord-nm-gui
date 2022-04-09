@@ -55,7 +55,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.domain_list = []
         self.server_info_list = []
         self.connected_server = None
-        self.bypass_api = "false"
         # DEBUG: bypass sudo dialogs by adding password here
         self.sudo_password = None
 
@@ -80,10 +79,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.show()
 
-        if self.config.getboolean("SETTINGS", "bypass_api"):
+        if 'json_path' in self.config['SETTINGS']:
             print("Bypassing API calls and using local JSON.")
             print("Login credentials are still needed to set up connections.")
-            with open(f"{os.path.dirname(__file__)}/assets/api_data.json", "r") as api_json:
+            with open(self.config['SETTINGS']['json_path'], "r") as api_json:
                 self.api_data = json.load(api_json)
 
         self.login_ui()
@@ -464,7 +463,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.username = self.user_input.text()
         self.password = self.password_input.text()
 
-        if self.config.getboolean("SETTINGS", "bypass_api"):
+        if 'json_path' in self.config["SETTINGS"]:
             self.hide()
             self.main_ui()
         else:
