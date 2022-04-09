@@ -1,4 +1,6 @@
 import subprocess
+import keyring
+import os
 
 
 def get_country_list(api_data):
@@ -47,12 +49,27 @@ def get_server_categories(categories):
     return category_string, category_list
 
 
+def country_spaces(connection_info):
+    """
+    Take everything before the first element containing a hash (the endpoint
+    number) and stuff it into element 0, popping other elements, in order to
+    handle country names containing spaces.
+    """
+
+    endpoint_number = [i for i, x in enumerate(connection_info) if '#' in x][0]
+    connection_info[0] = ' '.join(connection_info[:endpoint_number])
+    for _e in range(endpoint_number-1):
+        connection_info.pop(1)
+    return connection_info
+
+
 def get_connection_info(connection_info):
+    """
+    Return a standardised name and type for the provided connection.
+    """
+
     server_name = ''
     server_type = 0
-    print("Checking connection info...")
-    print(connection_info)
-
     if (
         "[Standard" in connection_info or "[Standard]" in connection_info
         or (
@@ -80,8 +97,6 @@ def get_connection_info(connection_info):
         server_type = 4
     elif "[TCP]" in connection_info:
         server_type = 1
-
-    print(server_name, server_type)
     return server_name, server_type
 
 
@@ -115,62 +130,59 @@ def get_interfaces():
         print("ERROR Fetching interfaces")
 
 
-def remove_connection(connection_name):
-    """
-    Remove connection from network manager
-    """
+def remove_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run([
-            "nmcli", "connection", "delete", connection_name
-        ])
+        connection = subprocess.run(
+            ["nmcli", "connection", "delete", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Failed to remove Connection")
 
 
-def disable_connection(connection_name):
-    """
-    Disconnect vpn connection in NetworkManager
-    """
+def disable_connection(connection_name, sudo_password):
     try:
         connection = subprocess.run(
-            ["nmcli", "connection", "down", connection_name]
+            ["nmcli", "connection", "down", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
         )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Disconnection Failed", 2000)
 
 
-def enable_connection(connection_name):
-    """
-    Enable vpn connection in NetworkManager
-    """
+def enable_connection(connection_name, sudo_password):
     try:
-        connection = subprocess.run([
-            "nmcli", "connection", "up", connection_name
-        ])
+        connection = subprocess.run(
+            ["nmcli", "connection", "up", connection_name],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         connection.check_returncode()
     except subprocess.CalledProcessError:
         print("ERROR: Connection Failed", 2000)
 
 
-def echo_sudo(sudo_password):
-    subprocess.Popen(
-        ["echo", sudo_password],
-        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-
-
-def nm_mod(connection_name, config_option, config_value):
+def nm_mod(connection_name, config_option, config_value, sudo_password):
     try:
-        process = subprocess.run([
-            "nmcli", "connection", "modify",
-            connection_name, config_option, config_value,
-        ])
+        process = subprocess.run(
+            [
+                "nmcli", "connection", "modify",
+                connection_name, config_option, config_value,
+            ],
+            stdin=echo_sudo(sudo_password).stdout
+        )
         process.check_returncode()
         return process
     except subprocess.CalledProcessError:
         print("ERROR: nmcli command failed", 2000)
+
+
+def echo_sudo(sudo_password):
+    return subprocess.Popen(
+        ["echo", sudo_password],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
 
 
 def write_conf(conf_path, config):
@@ -180,15 +192,59 @@ def write_conf(conf_path, config):
     configfile.close()
 
 
-def add_secrets(connection_name, username, password):
+def add_secrets(connection_name, username, password, sudo_password):
     """
     Add the username and password to the NetworkManager configuration.
     """
 
-    nm_mod(connection_name, "+vpn.data", "password-flags=0")
+    nm_mod(connection_name, "+vpn.data", "password-flags=0", sudo_password)
     nm_mod(
-        connection_name, "+vpn.secrets", f'password={password}'
+        connection_name, "+vpn.secrets", f'password={password}', sudo_password
     )
-    nm_mod(connection_name, "+vpn.data", f'username={username}')
-    nm_mod(connection_name, "+ipv6.method", "ignore")
-    nm_mod(connection_name, "+vpn.data", "password-flags=0")
+    nm_mod(connection_name, "+vpn.data", f'username={username}', sudo_password)
+    nm_mod(connection_name, "+ipv6.method", "ignore", sudo_password)
+    nm_mod(connection_name, "+vpn.data", "password-flags=0", sudo_password)
+
+
+def check_config(base_dir, config_path, scripts_path, conf_path, config):
+    """
+    Check if config directories and files exist and create them if they do
+    not. If username is found in config, fetch password from keyring
+    """
+
+    username = None
+    password = None
+
+    try:
+        if not os.path.isdir(base_dir):
+            os.mkdir(base_dir)
+        if not os.path.isdir(config_path):
+            os.mkdir(config_path)
+        if not os.path.isdir(scripts_path):
+            os.mkdir(scripts_path)
+        if not os.path.isfile(conf_path):
+            config["USER"] = {"USER_NAME": "None"}
+            config["SETTINGS"] = {
+                "MAC_RANDOMIZER": "false",
+                "KILL_SWITCH": "false",
+                "AUTO_CONNECT": "false",
+            }
+            print("No config file found, writing defaults")
+            write_conf(conf_path, config)
+
+        config.read(conf_path)
+        if (
+            config.has_option("USER", "USER_NAME")
+            and config.get("USER", "USER_NAME") != "None"
+        ):
+            print("User found in config, retrieving password from keyring")
+            username = config.get("USER", "USER_NAME")
+            try:
+                keyring.get_keyring()
+                password = keyring.get_password("NordVPN", username)
+            except Exception as e:
+                print("Error fetching keyring")
+        return username, password
+
+    except PermissionError:
+        print("Insufficient permissions to create config folder")
