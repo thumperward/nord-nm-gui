@@ -538,7 +538,7 @@ class MainWindow(QtWidgets.QMainWindow):
             )
             self.server_list.addItems(server_name_list)
         else:
-            self.server_list.addItem("No Servers Found")
+            self.server_list.addItem("No servers found")
 
         QtWidgets.QApplication.processEvents()
         self.retranslateUi()
@@ -995,7 +995,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Step through all of the UI Logic for connecting to the VPN.
         """
-        if self.server_list.findItems("No Servers Found", QtCore.Qt.MatchExactly):
+        if self.server_list.findItems("No servers found", QtCore.Qt.MatchExactly):
             self.statusbar.showMessage("No servers to connect to.", 2000)
             self.repaint()
             return
