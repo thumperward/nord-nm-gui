@@ -113,8 +113,8 @@ class MainWindow(QtWidgets.QMainWindow):
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
         self.horizontal_layout_2.addItem(spacer_item_1)
-
         self.horizontal_layout_2.addWidget(self.title_label)
+
         spacer_item_2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
@@ -188,7 +188,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.connection_type_select.setObjectName("connection_type_select")
         self.vertical_layout_2.addWidget(self.connection_type_select)
         self.horizontal_layout_1.addLayout(self.vertical_layout_2)
-
         self.horizontal_layout_1.addItem(QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
         ))
