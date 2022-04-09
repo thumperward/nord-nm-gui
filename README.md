@@ -42,13 +42,13 @@ create it if not present. This contains the following structure:
 
 ```cfg
 [USER]
-user_name = thumperward@hotmail.com
+user_name = user@email.com
 
 [SETTINGS]
 mac_randomizer = false
 kill_switch = false
 auto_connect = false
-json_path = /home/chris/api_data.json
+json_path = /path/to/api_data.json
 ```
 
 If `json_path` is specified the the program will skip authenticating against
