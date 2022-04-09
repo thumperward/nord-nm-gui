@@ -56,6 +56,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.config = configparser.ConfigParser()
         self.domain_list = []
         self.server_info_list = []
+        self.connected_server = None
 
         # DEBUG: bypass sudo dialogs by adding password here
         # self.sudo_password = ""
@@ -458,52 +459,55 @@ class MainWindow(QtWidgets.QMainWindow):
         self.username = self.user_input.text()
         self.password = self.password_input.text()
 
-        try:
-            resp = requests.post(
-                'https://api.nordvpn.com/v1/users/tokens',
-                json={
-                    'username': self.username, 'password': self.password
-                },
-                timeout=5
-            )
-            if resp.status_code == 201:
-                print("Login succeeded, retrieving list of servers...")
-                if self.rememberCheckbox.isChecked():
-                    try:
-                        keyring.set_password(
-                            "NordVPN", self.username, self.password)
-                        self.config['USER']['USER_NAME'] = self.username
-                        write_conf(conf_path, self.config)
-                    except Exception as e:
-                        print(e)
-                else:
-                    try:
-                        keyring.delete_password("NordVPN", self.username)
-                        self.config['USER']['USER_NAME'] = 'None'
-                        write_conf(conf_path, self.config)
-                    except Exception as e:
-                        print(e)
-                # To avoid hitting the API, uncomment the next line and comment
-                # the try block
-                self.api_data = api_data
-                # try:
-                #     resp = requests.get(api, timeout=5)
-                #     if resp.status_code == requests.codes.ok:
-                #         self.api_data = resp.json()
-                #     else:
-                #         print(resp.status_code, resp.reason)
-                #         sys.exit(1)
-                # except Exception as e:
-                #     print(e)
+        # To avoid hitting the API, uncomment the next three lines and comment
+        # the try block.
+        self.api_data = api_data
+        self.hide()
+        self.main_ui()
 
-                self.hide()
-                self.main_ui()
-            else:
-                self.statusbar.showMessage('Login failed.', 2000)
-                print(resp.status_code)
+        # try:
+        #     resp = requests.post(
+        #         'https://api.nordvpn.com/v1/users/tokens',
+        #         json={
+        #             'username': self.username, 'password': self.password
+        #         },
+        #         timeout=5
+        #     )
+        #     if resp.status_code == 201:
+        #         print("Login succeeded, retrieving list of servers...")
+        #         if self.rememberCheckbox.isChecked():
+        #             try:
+        #                 keyring.set_password(
+        #                     "NordVPN", self.username, self.password)
+        #                 self.config['USER']['USER_NAME'] = self.username
+        #                 write_conf(conf_path, self.config)
+        #             except Exception as e:
+        #                 print(e)
+        #         else:
+        #             try:
+        #                 keyring.delete_password("NordVPN", self.username)
+        #                 self.config['USER']['USER_NAME'] = 'None'
+        #                 write_conf(conf_path, self.config)
+        #             except Exception as e:
+        #                 print(e)
+        #         try:
+        #             resp = requests.get(api, timeout=5)
+        #             if resp.status_code == requests.codes.ok:
+        #                 self.api_data = resp.json()
+        #             else:
+        #                 print(resp.status_code, resp.reason)
+        #                 sys.exit(1)
+        #         except Exception as e:
+        #             print(e)
 
-        except Exception as e:
-            print(e)
+        #         self.hide()
+        #         self.main_ui()
+        #     else:
+        #         self.statusbar.showMessage('Login failed.', 2000)
+        #         print(resp.status_code)
+
+        # except Exception as e:
+        #     print(e)
 
     def get_server_list(self):
         """
@@ -622,10 +626,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def get_active_vpn(self):
         """
-        Query NetworkManager for the current connection.
-        If a current connection is found, set the UI to the appropriate state.
+        Check if any active networks are VPNs: if so, compare their names to
+        the available endpoints in the selected country.
 
-        :return True if connected to a VPN, else False
+        :return True if there is an active NordVPN connection, else False
         """
 
         try:
@@ -637,23 +641,32 @@ class MainWindow(QtWidgets.QMainWindow):
             for line in output.stdout.decode("utf-8").strip().split("\n"):
                 elements = line.strip().split(":")
                 if elements[0] == "vpn":
+                    print("Found an active VPN.")
                     connection_name = elements[1]
-                    connection_info = connection_name.split()
+                    connection_info = country_spaces(connection_name.split())
                     country = connection_info[0]
                     server_name, server_type = get_connection_info(
                         connection_info
                     )
-                    if self.server_info_list:  # Selected country has entries
-                        print(self.server_info_list)
+                    print(f"Is '{server_name}' a NordVPN endpoint?")
+                    if self.server_info_list:
+                        # The selected country has entries, probably because
+                        # It was selected in the UI.
+                        print("Checking if VPN is in the selected country...")
                         for server in self.server_info_list:
                             if server_name == server.name:
+                                print(f"{server_name} is a NordVPN endpoint.")
                                 self.connected_server = server.name
                                 return True
                     else:
+                        # There is no selected country, probably because the
+                        # program has just been started. Search for a country
+                        # matching the name of the VPN connection: if one is
+                        # found, select it in the UI
+                        print(f"Fetching endpoints for {country}...")
                         self.connect_button.hide()
                         self.disconnect_button.show()
                         self.repaint()
-                        print("Fetching active server...")
                         try:
                             item = self.country_list.findItems(
                                 country, QtCore.Qt.MatchExactly
@@ -674,6 +687,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                     )
                                     self.server_list.setFocus()
                                     self.connection_name = connection_name
+                                    print(f"Found the {server.name} endpoint.")
                                     self.connected_server = server.name
                                     return False
                         except Exception as e:
@@ -1053,6 +1067,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """
         Step through all of the UI Logic for connecting to the VPN.
         """
+        if self.server_list.findItems("No Servers Found", QtCore.Qt.MatchExactly):
+            self.statusbar.showMessage("No servers to connect to.", 2000)
+            self.repaint()
+            return
 
         if self.mac_changer_box.isChecked():
             self.randomize_mac()

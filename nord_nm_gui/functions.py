@@ -49,7 +49,25 @@ def get_server_categories(categories):
     return category_string, category_list
 
 
+def country_spaces(connection_info):
+    """
+    Take everything before the first element containing a hash (the endpoint
+    number) and stuff it into element 0, popping other elements, in order to
+    handle country names containing spaces.
+    """
+
+    endpoint_number = [i for i, x in enumerate(connection_info) if '#' in x][0]
+    connection_info[0] = ' '.join(connection_info[:endpoint_number])
+    for _e in range(endpoint_number-1):
+        connection_info.pop(1)
+    return connection_info
+
+
 def get_connection_info(connection_info):
+    """
+    Return a standardised name and type for the provided connection.
+    """
+
     server_name = ''
     server_type = 0
     if (
