@@ -11,7 +11,7 @@ authors = [
   "Chris Cunningham <thumperward@hotmail.com>"
 ]
 license = "GPL-3.0-or-later"
-# include = ["assets/*"]
+include = ["test/api_data.json"]
 
 [tool.poetry.dependencies]
 python = "^3.9"

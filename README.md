@@ -46,12 +46,13 @@ public domain.
 3.  ~Split helper functions out of GUI class~
 4.  ~Stop spamming API - dry run by getting JSON once and then commenting calls~
 5.  ~Fix GUI bugs~
-6.  Move NM calls to a Python binding instead of shelling out with `subprocess`
-7.  Handle sudo properly
-8.  Use standard XDG paths / libraries for handling config paths
-9.  ~Use a config option to bypass Nord API calls~
-10.  Add a map selector
-11.  Upstream
+6.  ~Use a config option to bypass Nord API calls~
+7.  Move NM calls to a Python binding instead of shelling out with `subprocess`
+8.  Handle sudo properly
+9.  Use `xdg` for handling config paths
+10.  Fix the .desktop icon path to be generic, or put the icon where it's needed
+11.  Add a map selector
+12.  Upstream
 
 ## WARNING
 

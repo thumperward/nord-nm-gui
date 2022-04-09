@@ -5,11 +5,11 @@
 # networkmanager-openvpn (arch)
 [Desktop Entry]
 Type=Application
-Version=0.0.1
+Version=0.1.0
 Name=nord-nm-gui
 Comment=Graphical NordVPN client
-# Path="$current_dir"/nord_vpn
-Exec=nordvpn-gui
+Exec=nord-nm-gui
 # Icon="$current_dir"/nord_vpn/nordvpnicon.ico
+Icon=/home/chris/.local/lib/python3.9/site-packages/nord_nm_gui/assets/nordvpnicon.png
 Terminal=false
 Categories=Internet;System;Utilities;

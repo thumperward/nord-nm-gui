@@ -37,8 +37,6 @@ config_path = os.path.join(os.path.abspath(base_dir), ".configs")
 scripts_path = os.path.join(os.path.abspath(base_dir), ".scripts")
 network_manager_path = "/etc/NetworkManager/dispatcher.d/"
 conf_path = os.path.join(config_path, "nord_settings.conf")
-with open("test/api_data.json", "r") as api_json:
-    api_data = json.load(api_json)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -85,7 +83,8 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.config.getboolean("SETTINGS", "bypass_api"):
             print("Bypassing API calls and using local JSON.")
             print("Login credentials are still needed to set up connections.")
-            self.api_data = api_data
+            with open(f"{os.path.dirname(__file__)}/assets/api_data.json", "r") as api_json:
+                self.api_data = json.load(api_json)
 
         self.login_ui()
         self.show()
