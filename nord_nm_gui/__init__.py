@@ -483,16 +483,18 @@ class MainWindow(QtWidgets.QMainWindow):
                         write_conf(conf_path, self.config)
                     except Exception as e:
                         print(e)
-                try:
-                    resp = requests.get(api, timeout=5)
-                    if resp.status_code == requests.codes.ok:
-                        self.api_data = resp.json()
-                    else:
-                        print(resp.status_code, resp.reason)
-                        sys.exit(1)
-                except Exception as e:
-                    print(e)
-                # self.api_data = api_data
+                # To avoid hitting the API, uncomment the next line and comment
+                # the try block
+                self.api_data = api_data
+                # try:
+                #     resp = requests.get(api, timeout=5)
+                #     if resp.status_code == requests.codes.ok:
+                #         self.api_data = resp.json()
+                #     else:
+                #         print(resp.status_code, resp.reason)
+                #         sys.exit(1)
+                # except Exception as e:
+                #     print(e)
 
                 self.hide()
                 self.main_ui()
@@ -623,38 +625,36 @@ class MainWindow(QtWidgets.QMainWindow):
         Query NetworkManager for the current connection.
         If a current connection is found, set the UI to the appropriate state.
 
-        :return Bool
+        :return True if connected to a VPN, else False
         """
 
         try:
             output = subprocess.run([
-                "nmcli",
-                "--mode", "tabular",
-                "--terse",
-                "--fields", "TYPE,NAME",
+                "nmcli", "--terse",
+                "--mode", "tabular", "--fields", "TYPE,NAME",
                 "connection", "show", "--active",
             ], stdout=subprocess.PIPE)
-            output.check_returncode()
             for line in output.stdout.decode("utf-8").strip().split("\n"):
-                try:
-                    elements = line.strip().split(":")
-                    if elements[0] == "vpn":
-                        connection_name = elements[1]
-                        connection_info = connection_name.split()
-                        country = connection_info[0]
-                        server_name, server_type = get_connection_info(
-                            connection_info
-                        )
-                        if self.server_info_list:  # vpn connected successfully
-                            for server in self.server_info_list:
-                                if server_name == server.name:
-                                    self.connected_server = server.name
-                                    return True
-                        else:
-                            self.connect_button.hide()
-                            self.disconnect_button.show()
-                            print("Fetching active server...")
-                            self.repaint()
+                elements = line.strip().split(":")
+                if elements[0] == "vpn":
+                    connection_name = elements[1]
+                    connection_info = connection_name.split()
+                    country = connection_info[0]
+                    server_name, server_type = get_connection_info(
+                        connection_info
+                    )
+                    if self.server_info_list:  # Selected country has entries
+                        print(self.server_info_list)
+                        for server in self.server_info_list:
+                            if server_name == server.name:
+                                self.connected_server = server.name
+                                return True
+                    else:
+                        self.connect_button.hide()
+                        self.disconnect_button.show()
+                        self.repaint()
+                        print("Fetching active server...")
+                        try:
                             item = self.country_list.findItems(
                                 country, QtCore.Qt.MatchExactly
                             )
@@ -676,12 +676,11 @@ class MainWindow(QtWidgets.QMainWindow):
                                     self.connection_name = connection_name
                                     self.connected_server = server.name
                                     return False
-                except Exception as e:
-                    print(e)
+                        except Exception as e:
+                            print(e)
 
-        except subprocess.CalledProcessError:
-            print("ERROR: Network Manager query error")
-            self.repaint()
+        except Exception as e:
+            print(e)
 
     def randomize_mac(self):
         """
