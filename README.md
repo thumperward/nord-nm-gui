@@ -63,19 +63,20 @@ connections, so should still be entered.
 
 ## TODO
 
-1.  ~Poetry~
-2.  ~Pre-commit and other linting~
-3.  ~Split helper functions out of GUI class~
-4.  ~Stop spamming API: dry run by getting JSON once and then commenting calls~
-5.  ~Fix GUI bugs~
-6.  ~Use a config option to bypass Nord API calls~
-7.  ~Change the option to bypass the API so it passes a path for the JSON file~
-8.  Move NM calls to a Python binding instead of shelling out with `subprocess`
-9.  Handle sudo properly
-10.  Use `xdg` for handling config paths
-11.  Fix the .desktop icon path to be generic or put the icon where it's needed
-12.  Add a map selector
-13.  Upstream
+-   ~Poetry~
+-   ~Pre-commit and other linting~
+-   ~Split helper functions out of GUI class~
+-   ~Stop spamming API: dry run by getting JSON once and then commenting calls~
+-   ~Fix GUI bugs~
+-   ~Use a config option to bypass Nord API calls~
+-   ~Change the option to bypass the API so it passes a path for the JSON file~
+-   Convert `print()`s to either status bar / taskbar notices or proper logging
+-   Move NM calls to a Python binding instead of shelling out with `subprocess`
+-   Handle sudo properly
+-   Use `xdg` for handling config paths
+-   Fix the .desktop icon path to be generic or put the icon where it's needed
+-   Add a map selector
+-   Upstream
 
 ## WARNING
 

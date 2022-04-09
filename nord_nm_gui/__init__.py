@@ -1,42 +1,22 @@
-# NordVPN-NetworkManager-GUI a graphical frontend for both NordVPN and NetworkManager
-# Copyright (C) 2018 Vincent Foster-Mueller
+# nord-nm-gui: a graphical frontend for both NordVPN and NetworkManager
+# Copyright (C) 2018 Vincent Foster-Mueller, 2022 Chris Cunningham
 
 import configparser
-import os
 import json
+import os
+import prctl
+import requests
 import shutil
 import subprocess
 import sys
 import time
-from collections import namedtuple
 
-import prctl
-import requests
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QAction, QMenu, QSystemTrayIcon, qApp
 
 from .functions import *
-
-connection_type_options = ["UDP", "TCP"]
-server_type_options = [
-    "P2P",
-    "Standard",
-    "Double VPN",
-    "TOR over VPN",
-    "Dedicated IP",
-]  # , 'Anti-DDoS', 'Obfuscated Server']
-api = "https://api.nordvpn.com/server"
-ServerInfo = namedtuple(
-    "ServerInfo", "name, country, domain, type, load, categories"
-)
-base_dir = os.path.join(
-    os.path.abspath(os.path.expanduser("~")), ".nordnmconfigs"
-)
-config_path = os.path.join(os.path.abspath(base_dir), ".configs")
-scripts_path = os.path.join(os.path.abspath(base_dir), ".scripts")
-network_manager_path = "/etc/NetworkManager/dispatcher.d/"
-conf_path = os.path.join(config_path, "nord_settings.conf")
+from .globals import *
 
 
 class MainWindow(QtWidgets.QMainWindow):
