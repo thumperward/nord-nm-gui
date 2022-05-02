@@ -28,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         self.setObjectName("MainWindowObject")
         self.setWindowIcon(QtGui.QIcon(
-            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png")
+            f"{os.path.dirname(__file__)}/assets/icon.svg")
         )
 
         self.config = configparser.ConfigParser()
@@ -51,7 +51,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def init_tray(self):
         self.tray_icon = QSystemTrayIcon(self)
         self.tray_icon.setIcon(QIcon(
-            f"{os.path.dirname(__file__)}/assets/nordvpnicon.png"
+            f"{os.path.dirname(__file__)}/assets/icon.svg"
         ))
         show_action = QAction("Show nord-nm-gui", self)
         quit_action = QAction("Exit", self)
@@ -1029,7 +1029,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle(_tr("MainWindow", "Server list"))
         self.title_label.setText(_tr(
             "MainWindow",
-            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nord-logo.png"/></p></body></html>',
+            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/logo.svg"/></p></body></html>',
         ))
         self.country_list_label.setText(_tr("MainWindow", "Countries"))
         self.auto_connect_box.setStatusTip(_tr(
@@ -1058,7 +1058,7 @@ class MainWindow(QtWidgets.QMainWindow):
         _tr = QtCore.QCoreApplication.translate
         self.nordImageWidget.setText(_tr(
             "MainWindow",
-            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/nordvpnicon.png"/></p><p align="center"><br/></p></body></html>',
+            f'<html><head/><body><p align="center"><img src="{os.path.dirname(__file__)}/assets/icon.svg"/></p><p align="center"><br/></p></body></html>',
         ))
         self.usernameLabel.setText(_tr(
             "MainWindow",

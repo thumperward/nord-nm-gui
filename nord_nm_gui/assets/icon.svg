@@ -1,0 +1,8 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+ <g id="Layer_1">
+  <title>Layer 1</title>
+  <ellipse ry="150" rx="150" id="svg_1" cy="150" cx="149.99999" stroke-width="0" stroke="#000" fill="#0055ff"/>
+  <ellipse ry="110" rx="113" id="svg_2" cy="150" cx="150" stroke-width="0" stroke="#000" fill="#ffffff"/>
+  <path id="svg_3" d="m53.5,261.00001l96.5,-160.00001l96.5,160.00001l-193,0z" stroke-width="0" stroke="#000" fill="#0055ff"/>
+ </g>
+</svg>

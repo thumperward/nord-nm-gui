@@ -6,9 +6,9 @@
 [![commits-since](https://img.shields.io/github/commits-since/vfosterm/NordVPN-NetworkManager-Gui/latest?style=for-the-badge)](https://github.com/vfosterm/NordVPN-NetworkManager-Gui/commits/master)
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://python.org)
 
-![Login screen](nord_nm_gui/assets/login_new.png)
+![Login screen](nord_nm_gui/assets/login.png)
 
-![Main screen](nord_nm_gui/assets/main_new.png)
+![Main screen](nord_nm_gui/assets/main.png)
 
 ## About
 
@@ -113,7 +113,7 @@ install in one step using `pip install .`.
 -   ~Fix GUI bugs~
 -   ~Use a config option to bypass Nord API calls~
 -   ~Change the option to bypass the API so it passes a path for the JSON file~
--   Removing copyrighted NordVPN assets and replace with free ones
+-   ~Removing copyrighted NordVPN assets and replace with free ones~
 -   Convert `print()`s to either status bar / taskbar notices or proper logging
 -   Always cache the `api_data.json` and try to re-use it, with a config option
     to force it to be downloaded
