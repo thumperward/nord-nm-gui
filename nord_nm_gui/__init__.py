@@ -87,72 +87,50 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         ))
-
         self.central_widget_ = QtWidgets.QWidget(self)
         self.central_widget_.setObjectName("self.central_widget_")
         self.title_label = QtWidgets.QLabel(self.central_widget_)
         self.title_label.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         ))
-
         self.title_label.setFont(font)
         self.title_label.setTextFormat(QtCore.Qt.RichText)
         self.title_label.setObjectName("title_label")
-
-        self.configure_status_bar()
-
-    def main_ui_grid(self):
-        self.grid_layout_1 = QtWidgets.QGridLayout(self.central_widget_)
-        self.grid_layout_1.setObjectName("self.grid_layout_1")
-
-        self.horizontal_layout_2 = QtWidgets.QHBoxLayout()
-        self.horizontal_layout_2.setObjectName("self.horizontal_layout_2")
-        spacer_item_1 = QtWidgets.QSpacerItem(
+        self.spacer_item_1 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.horizontal_layout_2.addItem(spacer_item_1)
-        self.horizontal_layout_2.addWidget(self.title_label)
-
-        spacer_item_2 = QtWidgets.QSpacerItem(
+        self.spacer_item_2 = QtWidgets.QSpacerItem(
             40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum
         )
-        self.horizontal_layout_2.addItem(spacer_item_2)
-        self.grid_layout_1.addLayout(self.horizontal_layout_2, 0, 0, 1, 2)
 
-        self.vertical_layout_3 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_3.setObjectName("self.vertical_layout_3")
         self.country_list_label = QtWidgets.QLabel(self.central_widget_)
         self.country_list_label.setObjectName("country_list_label")
-        self.vertical_layout_3.addWidget(self.country_list_label)
         self.line_1 = self.configure_line(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
         )
-        self.vertical_layout_3.addWidget(self.line_1)
 
-    def main_ui_checkboxes(self):
         self.country_list = QtWidgets.QListWidget(self.central_widget_)
         self.country_list.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.country_list.setObjectName("country_list")
-        self.vertical_layout_3.addWidget(self.country_list)
 
-        self.grid_layout_1.addLayout(self.vertical_layout_3, 1, 0, 1, 1)
-        self.horizontal_layout_1 = QtWidgets.QHBoxLayout()
-        self.horizontal_layout_1.setObjectName("self.horizontal_layout_1")
-        self.vertical_layout_1 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_1.setObjectName("self.vertical_layout_1")
+        self.central_widget_label = QtWidgets.QLabel(self.central_widget_)
+        self.central_widget_label.setObjectName(
+            "self.central_widget_label")
+        self.line_2 = self.configure_line(
+            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
+        )
+        self.server_list = QtWidgets.QListWidget(self.central_widget_)
+        self.server_list.setObjectName("server_list")
 
+        self.configure_status_bar()
+
+    def main_ui_checkboxes(self):
         self.auto_connect_box = QtWidgets.QCheckBox(self.central_widget_)
         self.auto_connect_box.setObjectName("auto_connect_box")
-        self.vertical_layout_1.addWidget(self.auto_connect_box)
-
         self.mac_changer_box = QtWidgets.QCheckBox(self.central_widget_)
         self.mac_changer_box.setObjectName("mac_changer_box")
-        self.vertical_layout_1.addWidget(self.mac_changer_box)
-
         self.kill_switch_button = QtWidgets.QCheckBox(self.central_widget_)
         self.kill_switch_button.setObjectName("kill_switch_button")
-        self.vertical_layout_1.addWidget(self.kill_switch_button)
-        self.horizontal_layout_1.addLayout(self.vertical_layout_1)
 
         if self.config.getboolean("SETTINGS", "mac_randomizer"):
             self.mac_changer_box.setChecked(True)
@@ -162,68 +140,77 @@ class MainWindow(QtWidgets.QMainWindow):
             self.auto_connect_box.setChecked(True)
 
     def main_ui_buttons(self):
-        self.vertical_layout_2 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_2.setObjectName("self.vertical_layout_2")
         self.server_type_select = QtWidgets.QComboBox(self.central_widget_)
         self.server_type_select.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
         ))
-
         self.server_type_select.setObjectName("server_type_select")
-        self.vertical_layout_2.addWidget(self.server_type_select)
         self.connection_type_select = QtWidgets.QComboBox(self.central_widget_)
         self.connection_type_select.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed
         ))
-
         self.connection_type_select.setObjectName("connection_type_select")
-        self.vertical_layout_2.addWidget(self.connection_type_select)
-        self.horizontal_layout_1.addLayout(self.vertical_layout_2)
-        self.horizontal_layout_1.addItem(QtWidgets.QSpacerItem(
-            40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
-        ))
-
         self.connect_button = QtWidgets.QPushButton(self.central_widget_)
         self.connect_button.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
         ))
-
         self.connect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.connect_button.setObjectName("connect_button")
-        self.horizontal_layout_1.addWidget(self.connect_button)
-
         self.disconnect_button = QtWidgets.QPushButton(self.central_widget_)
         self.disconnect_button.hide()
         self.disconnect_button.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed
         ))
-
         self.disconnect_button.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.disconnect_button.setObjectName("disconnect_button")
-        self.horizontal_layout_1.addWidget(self.disconnect_button)
-        self.grid_layout_1.addLayout(self.horizontal_layout_1, 2, 0, 1, 2)
 
         self.connect_button.clicked.connect(self.connect_vpn)
         self.disconnect_button.clicked.connect(self.disconnect_vpn)
         self.auto_connect_box.clicked.connect(self.disable_auto_connect)
         self.kill_switch_button.clicked.connect(self.disable_kill_switch)
 
-    def main_ui_raise(self):
+    def main_ui_layout(self):
+        self.horizontal_layout_1 = QtWidgets.QHBoxLayout()
+        self.horizontal_layout_1.setObjectName("self.horizontal_layout_1")
+        self.horizontal_layout_1.addItem(self.spacer_item_1)
+        self.horizontal_layout_1.addWidget(self.title_label)
+        self.horizontal_layout_1.addItem(self.spacer_item_2)
+        self.vertical_layout_1 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_1.setObjectName("self.vertical_layout_1")
+        self.vertical_layout_1.addWidget(self.country_list_label)
+        self.vertical_layout_1.addWidget(self.line_1)
+        self.vertical_layout_1.addWidget(self.country_list)
+        self.vertical_layout_2 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_2.setObjectName("self.vertical_layout_2")
+        self.vertical_layout_2.addWidget(self.auto_connect_box)
+        self.vertical_layout_2.addWidget(self.mac_changer_box)
+        self.vertical_layout_2.addWidget(self.kill_switch_button)
+        self.vertical_layout_3 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_3.setObjectName("self.vertical_layout_3")
+        self.vertical_layout_3.addWidget(self.server_type_select)
+        self.vertical_layout_3.addWidget(self.connection_type_select)
+        self.horizontal_layout_2 = QtWidgets.QHBoxLayout()
+        self.horizontal_layout_2.setObjectName("self.horizontal_layout_2")
+        self.horizontal_layout_2.addLayout(self.vertical_layout_2)
+        self.horizontal_layout_2.addLayout(self.vertical_layout_3)
+        self.horizontal_layout_2.addItem(QtWidgets.QSpacerItem(
+            40, 20, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum
+        ))
+        self.horizontal_layout_2.addWidget(self.connect_button)
+        self.horizontal_layout_2.addWidget(self.disconnect_button)
         self.vertical_layout_4 = QtWidgets.QVBoxLayout()
         self.vertical_layout_4.setObjectName("self.vertical_layout_4")
-        self.central_widget_label = QtWidgets.QLabel(self.central_widget_)
-        self.central_widget_label.setObjectName(
-            "self.central_widget_label")
         self.vertical_layout_4.addWidget(self.central_widget_label)
-        self.line_2 = self.configure_line(
-            QtWidgets.QSizePolicy.Maximum, QtWidgets.QSizePolicy.Fixed
-        )
         self.vertical_layout_4.addWidget(self.line_2)
-
-        self.server_list = QtWidgets.QListWidget(self.central_widget_)
-        self.server_list.setObjectName("server_list")
         self.vertical_layout_4.addWidget(self.server_list)
+        self.grid_layout_1 = QtWidgets.QGridLayout(self.central_widget_)
+        self.grid_layout_1.setObjectName("self.grid_layout_1")
+        self.grid_layout_1.addLayout(self.horizontal_layout_1, 0, 0, 1, 2)
+        self.grid_layout_1.addLayout(self.vertical_layout_1, 1, 0, 1, 1)
+        self.grid_layout_1.addLayout(self.horizontal_layout_2, 2, 0, 1, 2)
         self.grid_layout_1.addLayout(self.vertical_layout_4, 1, 1, 1, 1)
+
+    def main_ui_raise(self):
         self.title_label.raise_()
         self.server_list.raise_()
         self.country_list.raise_()
@@ -236,8 +223,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.line_1.raise_()
         self.line_2.raise_()
         self.kill_switch_button.raise_()
-        self.setCentralWidget(self.central_widget_)
 
+        self.setCentralWidget(self.central_widget_)
         server_country_list = get_country_list(self.api_data)
         self.connection_type_select.addItems(connection_type_options)
         self.server_type_select.addItems(server_type_options)
@@ -269,11 +256,10 @@ class MainWindow(QtWidgets.QMainWindow):
         """
 
         self.main_ui_central_widget()
-        self.main_ui_grid()
         self.main_ui_checkboxes()
         self.main_ui_buttons()
+        self.main_ui_layout()
         self.main_ui_raise()
-
         self.repaint()
         self.get_active_vpn()
         self.retranslateUi()
@@ -281,56 +267,31 @@ class MainWindow(QtWidgets.QMainWindow):
         QtWidgets.QApplication.processEvents()
         self.show()
 
-    def login_ui_central_widget(self):
+    def login_ui_widgets(self):
         self.resize(558, 468)
         self.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         )
-
         self.setWindowTitle("NordVPN login")
+
         self.central_widget_ = QtWidgets.QWidget(self)
         self.central_widget_.setObjectName("self.central_widget_")
-        self.grid_layout_2 = QtWidgets.QGridLayout(self.central_widget_)
-        self.grid_layout_2.setObjectName("self.grid_layout_2")
-
-        self.vertical_layout_5 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_5.setObjectName("self.vertical_layout_5")
         self.nordImageWidget = QtWidgets.QLabel(self.central_widget_)
         self.nordImageWidget.setObjectName("nordImageWidget")
-        self.vertical_layout_5.addWidget(self.nordImageWidget)
-
-    def login_ui_widgets(self):
-
-        self.vertical_layout_7 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_7.setSizeConstraint(
-            QtWidgets.QLayout.SetDefaultConstraint
-        )
-        self.vertical_layout_7.setContentsMargins(-1, 0, -1, -1)
-        self.vertical_layout_7.setSpacing(6)
-        self.vertical_layout_7.setObjectName("self.vertical_layout_7")
-        self.horizontal_layout_4 = QtWidgets.QHBoxLayout()
-        self.horizontal_layout_4.setObjectName("self.horizontal_layout_4")
         self.usernameLabel = QtWidgets.QLabel(self.central_widget_)
         self.usernameLabel.setObjectName("usernameLabel")
-        self.horizontal_layout_4.addWidget(self.usernameLabel)
         self.user_input = QtWidgets.QLineEdit(self.central_widget_)
         self.user_input.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding)
         )
-
         self.user_input.setMaximumSize(QtCore.QSize(200, 30))
         self.user_input.setBaseSize(QtCore.QSize(150, 50))
         self.user_input.setAlignment(QtCore.Qt.AlignCenter)
         self.user_input.setObjectName("user_input")
-        self.horizontal_layout_4.addWidget(self.user_input)
-        self.vertical_layout_7.addLayout(self.horizontal_layout_4)
 
-        self.horizontal_layout_2 = QtWidgets.QHBoxLayout()
-        self.horizontal_layout_2.setObjectName("self.horizontal_layout_2")
         self.passwordLabel = QtWidgets.QLabel(self.central_widget_)
         self.passwordLabel.setObjectName("passwordLabel")
-        self.horizontal_layout_2.addWidget(self.passwordLabel)
         self.password_input = QtWidgets.QLineEdit(self.central_widget_)
         self.password_input.setEchoMode(QtWidgets.QLineEdit.Password)
         self.password_input.setSizePolicy(self.set_size_policy(
@@ -341,40 +302,59 @@ class MainWindow(QtWidgets.QMainWindow):
         self.password_input.setMaximumSize(QtCore.QSize(200, 30))
         self.password_input.setAlignment(QtCore.Qt.AlignCenter)
         self.password_input.setObjectName("password_input")
-        self.horizontal_layout_2.addWidget(self.password_input)
-        self.vertical_layout_7.addLayout(self.horizontal_layout_2)
 
-        self.horizontal_layout_3 = QtWidgets.QHBoxLayout()
-        self.horizontal_layout_3.setObjectName("self.horizontal_layout_3")
-        self.horizontal_layout_3.addLayout(self.vertical_layout_7)
-        self.horizontal_layout_3.addItem(QtWidgets.QSpacerItem(
-            57, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
-        ))
-
-        self.vertical_layout_6 = QtWidgets.QVBoxLayout()
-        self.vertical_layout_6.setObjectName("self.vertical_layout_6")
         self.loginButton = QtWidgets.QPushButton(self.central_widget_)
         self.loginButton.setSizePolicy(self.set_size_policy(
             QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
         ))
-
         self.loginButton.setObjectName("loginButton")
-        self.vertical_layout_6.addWidget(self.loginButton)
         self.rememberCheckbox = QtWidgets.QCheckBox(self.central_widget_)
         self.rememberCheckbox.setObjectName("rememberCheckbox")
-        self.vertical_layout_6.addWidget(self.rememberCheckbox)
-        self.horizontal_layout_3.addLayout(self.vertical_layout_6)
+
+    def login_ui_layout(self):
+        self.horizontal_layout_3 = QtWidgets.QHBoxLayout()
+        self.horizontal_layout_3.setObjectName("self.horizontal_layout_3")
+        self.horizontal_layout_3.addWidget(self.usernameLabel)
+        self.horizontal_layout_3.addWidget(self.user_input)
+        self.horizontal_layout_4 = QtWidgets.QHBoxLayout()
+        self.horizontal_layout_4.setObjectName("self.horizontal_layout_4")
+        self.horizontal_layout_4.addWidget(self.passwordLabel)
+        self.horizontal_layout_4.addWidget(self.password_input)
+        self.vertical_layout_5 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_5.setSizeConstraint(
+            QtWidgets.QLayout.SetDefaultConstraint
+        )
+        self.vertical_layout_5.setContentsMargins(-1, 0, -1, -1)
+        self.vertical_layout_5.setSpacing(6)
+        self.vertical_layout_5.setObjectName("self.vertical_layout_5")
         self.vertical_layout_5.addLayout(self.horizontal_layout_3)
-        self.grid_layout_2.addLayout(self.vertical_layout_5, 0, 0, 1, 1)
+        self.vertical_layout_5.addLayout(self.horizontal_layout_4)
+        self.vertical_layout_6 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_6.setObjectName("self.vertical_layout_6")
+        self.vertical_layout_6.addWidget(self.loginButton)
+        self.vertical_layout_6.addWidget(self.rememberCheckbox)
+        self.horizontal_layout_5 = QtWidgets.QHBoxLayout()
+        self.horizontal_layout_5.setObjectName("self.horizontal_layout_5")
+        self.horizontal_layout_5.addLayout(self.vertical_layout_5)
+        self.horizontal_layout_5.addItem(QtWidgets.QSpacerItem(
+            57, 20, QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Minimum
+        ))
+        self.horizontal_layout_5.addLayout(self.vertical_layout_6)
+        self.vertical_layout_7 = QtWidgets.QVBoxLayout()
+        self.vertical_layout_7.setObjectName("self.vertical_layout_7")
+        self.vertical_layout_7.addWidget(self.nordImageWidget)
+        self.vertical_layout_7.addLayout(self.horizontal_layout_5)
+        self.grid_layout_2 = QtWidgets.QGridLayout(self.central_widget_)
+        self.grid_layout_2.setObjectName("self.grid_layout_2")
+        self.grid_layout_2.addLayout(self.vertical_layout_7, 0, 0, 1, 1)
 
     def login_ui(self):
         """
         Display login UI form.
         """
 
-        self.login_ui_central_widget()
         self.login_ui_widgets()
-
+        self.login_ui_layout()
         self.setCentralWidget(self.central_widget_)
         self.configure_status_bar()
         self.retranslate_login_ui()
