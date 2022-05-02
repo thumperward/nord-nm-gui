@@ -115,10 +115,13 @@ install in one step using `pip install .`.
 -   ~Change the option to bypass the API so it passes a path for the JSON file~
 -   ~Removing copyrighted NordVPN assets and replace with free ones~
 -   Convert `print()`s to either status bar / taskbar notices or proper logging
+    and re-add the ones that were removed during the rewrite
 -   Always cache the `api_data.json` and try to re-use it, with a config option
     to force it to be downloaded
 -   Move NM calls to a Python binding instead of shelling out with `subprocess`
 -   Handle sudo properly
+-   Figure out how to get PyQt5 to use the system light/dark theme (installing
+    `adwaita-qt` isn't sufficient)
 -   Use `xdg` for handling config paths
 -   Fix the .desktop icon path to be generic or put the icon where it's needed
 -   Add tests
