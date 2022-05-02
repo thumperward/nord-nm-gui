@@ -455,7 +455,11 @@ class MainWindow(QtWidgets.QMainWindow):
             categories, category_list = get_server_categories(
                 server["categories"]
             )
-            if server["name"] not in server_name_list and server["country"] == filtered[0] and filtered[1] in category_list:
+            if (
+                server["name"] not in server_name_list
+                and server["country"] == filtered[0]
+                and filtered[1] in category_list
+            ):
                 server_name_list.append(
                     f'{server["name"]}\n'
                     f'Load: {server["load"]}%\n'
@@ -581,8 +585,11 @@ class MainWindow(QtWidgets.QMainWindow):
             self.get_server_list()
             for server in self.server_info_list:
                 if server_name == server.name:
+                    server_filter = f"{server_name}\nLoad: {server.load}%\n"
+                    f"Domain: {server.domain}\n"
+                    f"Categories: {server.categories}"
                     server_list_item = self.server_list.findItems(
-                        f"{server_name}\nLoad: {server.load}%\nDomain: {server.domain}\nCategories: {server.categories}",
+                        server_filter,
                         QtCore.Qt.MatchExactly
                     )
                     self.server_list.setCurrentItem(server_list_item[0])
