@@ -29,18 +29,25 @@ In 2022 Chris Cunningham packaged the program up using Poetry and added lots of
 general tooling to make future development easier. Changes include:
 
 -   Reorganizing the repo as expected by PEP 518, and permitting it to be built
-    as a standard Python package
+    as a standard Python package.
 -   Adding a VS Code devcontainer and associated tooling to provide isolation
     of the environment (above that provided by virtualenv) and to permit non-
-    Python dependencies and tooling to be described in code
+    Python dependencies and tooling to be described in code.
 -   Major refactoring and reorganisation of the original >1200-line monolithic
     class to split helper functions out, to de-duplicate shared code into new
-    functions and methods, and to aid in readability
+    functions and methods, and to aid in readability.
 -   Lots of bug fixes such as Qt errors and problems figuring out the name of
-    the VPN if connected to a country with whitespace in the name
+    the VPN if connected to a country with whitespace in the name.
 -   The ability to bypass some calls to the (old) NordVPN API, which avoids
     hitting the fairly severe rate-limiting on the server side, and slightly
-    speeds up startup
+    speeds up startup.
+
+## Prerequisites
+
+A standard Ubuntu 22.04 desktop install includes all necessary prerequisites
+(notably Qt and NetworkManager) except the following:
+
+-   `libxcb-xinerama0`
 
 ## Features
 
