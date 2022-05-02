@@ -100,9 +100,10 @@ To run the current code without packaging, run `poetry run nord-nm-gui`.
 To package the code, run `poetry build`; additionally, you can package and
 install in one step using `pip install .`.
 
-## Known issues
-
--   No support for obfuscated servers
+The provided `.desktop` file can be used to add a launcher icon. First install
+the package as above, then edit `nord-nm-gui.desktop` to set the `Icon` path to
+match your user's Python `site-packages` path. Then copy the file to
+`~/.local/share/applications/`.
 
 ## TODO
 
@@ -125,6 +126,7 @@ install in one step using `pip install .`.
 -   Use `xdg` for handling config paths
 -   Fix the .desktop icon path to be generic or put the icon where it's needed
 -   Add tests
+-   Add support for obfuscated servers
 -   Package with PyInstaller or standard linux packaging tools
 -   Add a map selector
 -   Upstream
